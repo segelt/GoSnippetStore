@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
+
+	_ "snippetdemo/internal/database/postgres"
 )
 
 func main() {
