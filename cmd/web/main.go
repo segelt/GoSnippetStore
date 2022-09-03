@@ -5,9 +5,12 @@ import (
 	"net/http"
 
 	_ "snippetdemo/internal/database/postgres"
+	repo "snippetdemo/internal/snippetdemo/repo/postgres"
 )
 
 func main() {
+	repo.MigrateModels()
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", snippets)
 	log.Println("Starting server on :4000")

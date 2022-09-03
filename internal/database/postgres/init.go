@@ -17,6 +17,7 @@ const (
 
 var (
 	DbClient *gorm.DB
+	err      error
 )
 
 func init() {
@@ -24,7 +25,7 @@ func init() {
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 
-	DbClient, err := gorm.Open(postgres.Open(connectionString), &gorm.Config{})
+	DbClient, err = gorm.Open(postgres.Open(connectionString), &gorm.Config{})
 
 	if err != nil {
 		panic(err)
