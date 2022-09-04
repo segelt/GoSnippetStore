@@ -8,7 +8,7 @@ import (
 type Snippet models.Snippet
 
 func (r *Repo) InsertSnippet(userId int, content string) error {
-	expireTime := time.Now().Add(10)
+	expireTime := time.Now().AddDate(0, 0, 10)
 	result := r.DbClient.Create(&Snippet{Content: content, UserID: userId, Created: time.Now(), Expires: expireTime})
 
 	return result.Error
