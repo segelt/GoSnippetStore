@@ -1,13 +1,15 @@
 package main
 
 import (
-	"net/http"
+	"snippetdemo/internal/snippetdemo/handler"
+	snippetrepo "snippetdemo/internal/snippetdemo/repo/postgres"
+	"snippetdemo/internal/snippetdemo/service"
 )
 
-func snippets(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Snippet demo test"))
-}
-
 func (srv *Server) MapHandlers() {
-	srv.router.HandleFunc("/", snippets)
+	repo := snippetrepo.Repo{DbClient: srv.db}
+	snippetservice := service.NewSnippetService(repo)
+	snippetHandler := handler.NewSnippetHandler(*snippetservice)
+
+	srv.router.HandleFunc("/create-snippet", snippetHandler.CreateSnippet)
 }
