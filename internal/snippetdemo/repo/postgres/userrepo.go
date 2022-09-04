@@ -5,16 +5,14 @@ import (
 	"snippetdemo/pkg/models"
 )
 
-type User models.User
-
-func (r *Repo) InsertUser(user *User) error {
+func (r *Repo) InsertUser(user *models.User) error {
 	record := r.DbClient.Create(&user)
 
 	return record.Error
 }
 
-func (r *Repo) GetUser(username string) (*User, error) {
-	var user User
+func (r *Repo) GetUser(username string) (*models.User, error) {
+	var user models.User
 	record := r.DbClient.Where("username = ?", username).First(&user)
 
 	if record.Error != nil {

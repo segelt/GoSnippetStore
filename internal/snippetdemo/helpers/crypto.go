@@ -11,6 +11,11 @@ func HashStr(text string) string {
 	return encodedstr
 }
 
+func HashStrAsByteArray(text string) []byte {
+	hash := md5.Sum([]byte(text))
+	return hash[:]
+}
+
 func CompareHashAndPassword(providedPassword string, existingHash string) bool {
 	hashedPassword := HashStr(providedPassword)
 	return hashedPassword == existingHash

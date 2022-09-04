@@ -7,6 +7,6 @@ type User struct {
 }
 
 type UserService interface {
-	RegisterUser(username string, password string) (int, error)
+	RegisterUser(username string, password string) error
 	VerifyUser(username string, password string) (bool, error)
 }

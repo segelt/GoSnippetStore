@@ -7,14 +7,12 @@ import (
 	"snippetdemo/pkg/models"
 )
 
-type User models.User
-
 type UserService struct {
 	Repo snippetrepo.Repo
 }
 
-func HashPassword(password string) string {
-	hashedPassword := helpers.HashStr(password)
+func HashPassword(password string) []byte {
+	hashedPassword := helpers.HashStrAsByteArray(password)
 	return hashedPassword
 }
 func CheckPassword(actualHashedPassword string, providedPassword string) error {
@@ -26,9 +24,17 @@ func CheckPassword(actualHashedPassword string, providedPassword string) error {
 	}
 }
 
-func (svc *UserService) RegisterUser(username string, password string) (int, error) {
-	panic("Not implemented")
+func (svc *UserService) RegisterUser(username string, password string) error {
+	hashedpwd := HashPassword(password)
+	user := models.User{Username: username, Password: hashedpwd}
+
+	err := svc.Repo.InsertUser(&user)
+	return err
 }
 func (svc *UserService) VerifyUser(username string, password string) (bool, error) {
 	panic("Not implemented")
+}
+
+func NewUserService(repo snippetrepo.Repo) *UserService {
+	return &UserService{Repo: repo}
 }

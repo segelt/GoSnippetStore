@@ -11,5 +11,7 @@ func (srv *Server) MapHandlers() {
 	snippetservice := service.NewSnippetService(repo)
 	snippetHandler := handler.NewSnippetHandler(*snippetservice)
 
+	// userservice := service.NewUserService(repo)
+
 	srv.router.HandleFunc("/create-snippet", snippetHandler.CreateSnippet)
 }
