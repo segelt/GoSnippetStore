@@ -24,7 +24,7 @@ type JWTManager struct {
 	Secretkey []byte
 }
 
-func (mgr JWTManager) GenerateJWT(userid string, email string, username string) (tokenString string, err error) {
+func (mgr JWTManager) GenerateJWT(userid string, username string) (tokenString string, err error) {
 	expirationTime := time.Now().Add(1 * time.Hour)
 
 	claims := JWTClaim{

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"snippetdemo/internal/snippetdemo/helpers"
+	"snippetdemo/pkg/models"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -30,16 +31,40 @@ func CheckPassword(actualHashedPassword string, providedPassword string) error {
 func (svc *UserService) RegisterUser(username string, password string) error {
 	hashedpwd := HashPassword(password)
 	coll := svc.Client.Database("snippetdb").Collection("users")
-	userd := bson.D{{"Username", username}, {"Password", hashedpwd}}
+	userd := bson.D{{"username", username}, {"password", hashedpwd}}
 	_, err := coll.InsertOne(context.TODO(), userd)
 	return err
 }
-func (svc *UserService) VerifyUser(username string, password string) (bool, error) {
-	panic("Not implemented")
+func (svc *UserService) VerifyUser(username string, password string) (string, error) {
+	db := svc.Client.Database("snippetdb")
+	userscol := db.Collection("users")
+
+	var user models.User
+	err := userscol.FindOne(context.TODO(), bson.M{"username": username}).Decode(&user)
+
+	if err != nil {
+		return "", err
+	}
+
+	err = CheckPassword(string(user.Password), password)
+	if err != nil {
+		return "", err
+	}
+
+	// User is validated, generate JWT token
+	generatedToken, err := svc.generateToken(user.IdString(), user.Username, svc.Secretkey)
+
+	if err != nil {
+		return "", err
+	}
+
+	return generatedToken, nil
 }
 
-func generateToken(userId string, username string, secretkey string) {
-	panic("Not implemented")
+func (svc *UserService) generateToken(userId string, username string, secretkey string) (string, error) {
+	mgr := helpers.JWTManager{Secretkey: []byte(svc.Secretkey)}
+
+	return mgr.GenerateJWT(userId, username)
 }
 
 func NewUserService(client *mongo.Client, secretkey string) *UserService {

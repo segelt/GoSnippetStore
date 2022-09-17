@@ -1,9 +1,15 @@
 package models
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
 type User struct {
-	ID       int    `json:"userID"`
-	Username string `json:"username"`
-	Password []byte `json:"hashedPassword"`
+	ID       primitive.ObjectID `json:"userID" bson:"_id,omitempty"`
+	Username string             `json:"username" bson:"username"`
+	Password []byte             `json:"hashedPassword" bson:"password"`
+}
+
+func (user User) IdString() string {
+	return user.ID.Hex()
 }
 
 type UserService interface {
