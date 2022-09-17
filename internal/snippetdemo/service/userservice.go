@@ -10,7 +10,8 @@ import (
 )
 
 type UserService struct {
-	Client *mongo.Client
+	Client    *mongo.Client
+	Secretkey string
 }
 
 func HashPassword(password string) []byte {
@@ -37,6 +38,10 @@ func (svc *UserService) VerifyUser(username string, password string) (bool, erro
 	panic("Not implemented")
 }
 
-func NewUserService(client *mongo.Client) *UserService {
-	return &UserService{Client: client}
+func generateToken(userId string, username string, secretkey string) {
+	panic("Not implemented")
+}
+
+func NewUserService(client *mongo.Client, secretkey string) *UserService {
+	return &UserService{Client: client, Secretkey: secretkey}
 }

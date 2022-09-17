@@ -24,7 +24,8 @@ func main() {
 		panic(err)
 	}
 
-	srv := &Server{client: s.Client}
+	jwtkey := os.Getenv("JWT_KEY")
+	srv := &Server{client: s.Client, secretKey: jwtkey}
 	err = srv.StartServer()
 	fmt.Println("Started server")
 

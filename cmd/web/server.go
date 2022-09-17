@@ -7,8 +7,9 @@ import (
 )
 
 type Server struct {
-	client *mongo.Client
-	router *http.ServeMux
+	client    *mongo.Client
+	router    *http.ServeMux
+	secretKey string
 }
 
 func (srv *Server) StartServer() error {
