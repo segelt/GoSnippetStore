@@ -1,14 +1,16 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"snippetdemo/internal/snippetdemo/helpers"
-	snippetrepo "snippetdemo/internal/snippetdemo/repo/postgres"
-	"snippetdemo/pkg/models"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type UserService struct {
-	Repo snippetrepo.Repo
+	Client *mongo.Client
 }
 
 func HashPassword(password string) []byte {
@@ -26,15 +28,15 @@ func CheckPassword(actualHashedPassword string, providedPassword string) error {
 
 func (svc *UserService) RegisterUser(username string, password string) error {
 	hashedpwd := HashPassword(password)
-	user := models.User{Username: username, Password: hashedpwd}
-
-	err := svc.Repo.InsertUser(&user)
+	coll := svc.Client.Database("snippetdb").Collection("users")
+	userd := bson.D{{"Username", username}, {"Password", hashedpwd}}
+	_, err := coll.InsertOne(context.TODO(), userd)
 	return err
 }
 func (svc *UserService) VerifyUser(username string, password string) (bool, error) {
 	panic("Not implemented")
 }
 
-func NewUserService(repo snippetrepo.Repo) *UserService {
-	return &UserService{Repo: repo}
+func NewUserService(client *mongo.Client) *UserService {
+	return &UserService{Client: client}
 }

@@ -2,13 +2,11 @@ package main
 
 import (
 	"snippetdemo/internal/snippetdemo/handler"
-	snippetrepo "snippetdemo/internal/snippetdemo/repo/postgres"
 	"snippetdemo/internal/snippetdemo/service"
 )
 
 func (srv *Server) MapHandlers() {
-	repo := snippetrepo.Repo{DbClient: srv.db}
-	snippetservice := service.NewSnippetService(repo)
+	snippetservice := service.NewSnippetService(srv.client)
 	snippetHandler := handler.NewSnippetHandler(*snippetservice)
 
 	// userservice := service.NewUserService(repo)

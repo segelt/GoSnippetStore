@@ -3,11 +3,11 @@ package main
 import (
 	"net/http"
 
-	"gorm.io/gorm"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Server struct {
-	db     *gorm.DB
+	client *mongo.Client
 	router *http.ServeMux
 }
 

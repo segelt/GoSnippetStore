@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"snippetdemo/internal/database/mongorepo"
+	"snippetdemo/internal/database/mongocl"
 
 	"github.com/joho/godotenv"
 )
@@ -16,15 +16,21 @@ func main() {
 	}
 
 	mongoUri := os.Getenv("MONGODB_URI")
-
-	s := mongorepo.Repo{}
-
+	s := mongocl.Repo{}
 	err = s.Initialize(mongoUri)
 
+	if err != nil {
+		log.Fatal(err)
+		panic(err)
+	}
+
+	srv := &Server{client: s.Client}
+	err = srv.StartServer()
 	fmt.Println("Started server")
 
 	if err != nil {
 		log.Fatal(err)
+		panic(err)
 	}
 
 }

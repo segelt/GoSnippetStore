@@ -1,4 +1,4 @@
-package mongorepo
+package mongocl
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 )
 
 type Repo struct {
-	client *mongo.Client
+	Client *mongo.Client
 }
 
 func (s *Repo) setupConnection(uri string) error {
@@ -27,7 +27,7 @@ func (s *Repo) setupConnection(uri string) error {
 		return err
 	}
 
-	s.client = client
+	s.Client = client
 	return nil
 }
 
@@ -55,7 +55,7 @@ func (s Repo) Initialize(uri string) error {
 
 func (s Repo) GracefulShutdownDbConnection() error {
 	fmt.Println("Disconnecting")
-	err := s.client.Disconnect(context.TODO())
+	err := s.Client.Disconnect(context.TODO())
 
 	return err
 }
