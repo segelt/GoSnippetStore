@@ -38,3 +38,27 @@ func (h *UserHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	render(w, "Success", http.StatusCreated)
 }
+
+func (h *UserHandler) VerifyUser(w http.ResponseWriter, r *http.Request) {
+	type UserVerifyReq struct {
+		Username string
+		Password string
+	}
+
+	var req UserVerifyReq
+
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	tokenstr, err := h.svc.VerifyUser(req.Username, req.Password)
+
+	if err != nil {
+		render(w, err, http.StatusInternalServerError)
+	}
+
+	w.Write([]byte(tokenstr))
+	render(w, "Success", http.StatusCreated)
+}
