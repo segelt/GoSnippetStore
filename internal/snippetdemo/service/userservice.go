@@ -29,7 +29,7 @@ func CheckPassword(actualHashedPassword string, providedPassword string) error {
 }
 
 func (svc *UserService) RegisterUser(username string, password string) error {
-	hashedpwd := HashPassword(password)
+	hashedpwd := helpers.HashStr(password)
 	coll := svc.Client.Database("snippetdb").Collection("users")
 	userd := bson.D{{"username", username}, {"password", hashedpwd}}
 	_, err := coll.InsertOne(context.TODO(), userd)
@@ -46,7 +46,7 @@ func (svc *UserService) VerifyUser(username string, password string) (string, er
 		return "", err
 	}
 
-	err = CheckPassword(string(user.Password), password)
+	err = CheckPassword(user.Password, password)
 	if err != nil {
 		return "", err
 	}

@@ -34,9 +34,10 @@ func (h *UserHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		render(w, err, http.StatusInternalServerError)
+	} else {
+		render(w, "Success", http.StatusCreated)
 	}
 
-	render(w, "Success", http.StatusCreated)
 }
 
 func (h *UserHandler) VerifyUser(w http.ResponseWriter, r *http.Request) {
@@ -57,8 +58,8 @@ func (h *UserHandler) VerifyUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		render(w, err, http.StatusInternalServerError)
+	} else {
+		render(w, tokenstr, http.StatusCreated)
 	}
 
-	w.Write([]byte(tokenstr))
-	render(w, "Success", http.StatusCreated)
 }

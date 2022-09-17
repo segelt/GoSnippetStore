@@ -31,7 +31,7 @@ func (s *Repo) setupConnection(uri string) error {
 	return nil
 }
 
-func (s Repo) Initialize(uri string) error {
+func (s *Repo) Initialize(uri string) error {
 	err := s.setupConnection(uri)
 
 	if err != nil {
@@ -39,16 +39,6 @@ func (s Repo) Initialize(uri string) error {
 		log.Fatal("Could not connect to db. Terminating app")
 		return err
 	}
-
-	defer func() {
-		err = s.GracefulShutdownDbConnection()
-
-		if err != nil {
-			log.Fatal("Could not disconnect from db")
-			log.Fatal(err)
-			panic(err)
-		}
-	}()
 
 	return nil
 }

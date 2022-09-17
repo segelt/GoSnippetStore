@@ -5,7 +5,7 @@ import "go.mongodb.org/mongo-driver/bson/primitive"
 type User struct {
 	ID       primitive.ObjectID `json:"userID" bson:"_id,omitempty"`
 	Username string             `json:"username" bson:"username"`
-	Password []byte             `json:"hashedPassword" bson:"password"`
+	Password string             `json:"hashedPassword" bson:"password"`
 }
 
 func (user User) IdString() string {

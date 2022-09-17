@@ -19,6 +19,16 @@ func main() {
 	s := mongocl.Repo{}
 	err = s.Initialize(mongoUri)
 
+	defer func() {
+		err = s.GracefulShutdownDbConnection()
+
+		if err != nil {
+			log.Fatal("Could not disconnect from db")
+			log.Fatal(err)
+			panic(err)
+		}
+	}()
+
 	if err != nil {
 		log.Fatal(err)
 		panic(err)
