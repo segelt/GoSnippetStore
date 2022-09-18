@@ -17,12 +17,18 @@ type SnippetService struct {
 	Client *mongo.Client
 }
 
-func (svc *SnippetService) InsertSnippet(userId string, content string) error {
+func (svc *SnippetService) InsertSnippet(userId string, content string, title string, categoryid int) error {
 
 	coll := svc.Client.Database("snippetdb").Collection("snippets")
 	// err := svc.Repo.InsertSnippet(userId, content)
-	expireTime := time.Now().AddDate(0, 0, 10)
-	snippet := bson.D{{"Content", content}, {"UserId", userId}, {"Created", time.Now()}, {"Expires", expireTime}}
+	createDate := time.Now()
+	expireTime := createDate.AddDate(0, 0, 10)
+	snippet := bson.D{{"content", content},
+		{"UserId", userId},
+		{"title", title},
+		{"category", categoryid},
+		{"created", createDate},
+		{"expireDate", expireTime}}
 
 	_, err := coll.InsertOne(context.TODO(), snippet)
 	return err
