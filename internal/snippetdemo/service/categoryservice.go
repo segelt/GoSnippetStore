@@ -59,15 +59,26 @@ func (svc *CategoryService) GetCategories(filter CategoryFilter) (*[]Category, e
 	}
 
 	if filter.Description != nil {
-		var descfilter string
-		descfilter = fmt.Sprintf("/.*%s.*/", *filter.Description)
-		f := bson.E{Key: "description", Value: bson.E{
-			Key: "$regex",
-			Value: primitive.Regex{
-				Pattern: ".*" + descfilter + ".*",
-				Options: "i",
+		// descfilter := fmt.Sprintf("/.*%s.*/", *filter.Description)
+		// f := bson.E{Key: "description", Value: bson.E{
+		// 	Key: "$regex",
+		// 	Value: primitive.Regex{
+		// 		Pattern: descfilter,
+		// 		// Options: "i",
+		// 	},
+		// }}
+
+		// f := bson.E{Key: "description", Value: bson.D{
+		// 	"$regex", primitive.Regex{Pattern: descfilter, Options: "i"}}}
+
+		f := bson.E{Key: "description",
+			Value: bson.D{{"$regex",
+				primitive.Regex{
+					Pattern: *filter.Description,
+					Options: "i"}},
 			},
-		}}
+		}
+
 		qry = append(qry, f)
 	}
 
@@ -75,7 +86,7 @@ func (svc *CategoryService) GetCategories(filter CategoryFilter) (*[]Category, e
 	var sortFilter bson.D
 	if filter.SortBy != nil {
 		sortDir := -1
-		if *filter.SortDirection == "asc" {
+		if filter.SortDirection != nil && *filter.SortDirection == "asc" {
 			sortDir = 1
 		}
 
@@ -92,14 +103,15 @@ func (svc *CategoryService) GetCategories(filter CategoryFilter) (*[]Category, e
 		sortOptions = options.Find().SetSort(sortFilter)
 	}
 
-	cursor, err := coll.Find(context.TODO(), filter, sortOptions)
+	cursor, _ := coll.Find(context.TODO(), qry, sortOptions)
 
-	var results []bson.D
+	var results []Category
 	if err = cursor.All(context.TODO(), &results); err != nil {
-		panic(err)
+		fmt.Println(err.Error())
+		return nil, err
 	}
 
-	return nil, nil
+	return &results, nil
 }
 
 func NewCategoryService(client *mongo.Client) *CategoryService {

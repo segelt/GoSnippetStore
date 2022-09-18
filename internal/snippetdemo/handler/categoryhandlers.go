@@ -18,11 +18,11 @@ func NewCategoryHandler(svc service.CategoryService) *CategoryHandler {
 
 func (h *CategoryHandler) FilterCategories(w http.ResponseWriter, r *http.Request) {
 	type CategoryFilterReq struct {
-		CategoryId    int
-		Description   string
-		SortBy        string
-		SortDirection string
-		Count         int
+		CategoryId    *int
+		Description   *string
+		SortBy        *string
+		SortDirection *string
+		Count         *int
 	}
 
 	var req CategoryFilterReq
@@ -34,11 +34,11 @@ func (h *CategoryHandler) FilterCategories(w http.ResponseWriter, r *http.Reques
 	}
 
 	res, err := h.svc.GetCategories(service.CategoryFilter{
-		CategoryId:    &req.CategoryId,
-		Description:   &req.Description,
-		SortBy:        &req.SortBy,
-		SortDirection: &req.SortDirection,
-		Count:         &req.Count,
+		CategoryId:    req.CategoryId,
+		Description:   req.Description,
+		SortBy:        req.SortBy,
+		SortDirection: req.SortDirection,
+		Count:         req.Count,
 	})
 
 	fmt.Println(res)
