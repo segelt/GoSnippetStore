@@ -35,7 +35,8 @@ func (h *SnippetHandler) CreateSnippet(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		render(w, err, http.StatusInternalServerError)
+	} else {
+		render(w, "Success", http.StatusCreated)
 	}
 
-	render(w, "Success", http.StatusCreated)
 }

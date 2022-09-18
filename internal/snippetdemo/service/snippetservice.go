@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"log"
 	"snippetdemo/pkg/models"
 	"time"
 
@@ -18,6 +20,18 @@ type SnippetService struct {
 }
 
 func (svc *SnippetService) InsertSnippet(userId string, content string, title string, categoryid int) error {
+
+	categorycl := svc.Client.Database("snippetdb").Collection("categories")
+	var cg models.Category
+
+	err = categorycl.FindOne(context.TODO(), bson.D{{"categoryId", categoryid}}).Decode(&cg)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			log.Println("No categories match this query. %d\n", categoryid)
+			return fmt.Errorf("No categories match this query. %d", categoryid)
+		}
+		return err
+	}
 
 	coll := svc.Client.Database("snippetdb").Collection("snippets")
 	// err := svc.Repo.InsertSnippet(userId, content)
