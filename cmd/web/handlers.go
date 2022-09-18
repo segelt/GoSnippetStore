@@ -13,9 +13,13 @@ func (srv *Server) MapHandlers() {
 	userservice := service.NewUserService(srv.client, srv.secretKey)
 	userHandler := handler.NewUserHandler(*userservice)
 
+	categoryService := service.NewCategoryService(srv.client)
+	categoryHandler := handler.NewCategoryHandler(*categoryService)
+
 	middlewareManager := middlewares.MiddleWareManager{SecretKey: srv.secretKey}
 
 	srv.router.HandleFunc("/create-snippet", middlewares.MultipleMiddleware(snippetHandler.CreateSnippet, middlewareManager.Auth))
 	srv.router.HandleFunc("/createuser", userHandler.RegisterUser)
 	srv.router.HandleFunc("/verifyuser", userHandler.VerifyUser)
+	srv.router.HandleFunc("/categories", categoryHandler.FilterCategories)
 }
