@@ -40,12 +40,12 @@ func (mgr JWTManager) GenerateJWT(userid string, username string) (tokenString s
 	return
 }
 
-func (mgr JWTManager) ValidateToken(signedToken string) (*ContextInfo, error) {
+func ValidateToken(secretKey string, signedToken string) (*ContextInfo, error) {
 	token, err := jwt.ParseWithClaims(
 		signedToken,
 		&JWTClaim{},
 		func(token *jwt.Token) (interface{}, error) {
-			return []byte(mgr.Secretkey), nil
+			return []byte(secretKey), nil
 		},
 	)
 

@@ -11,7 +11,7 @@ type Snippet struct {
 }
 
 type SnippetService interface {
-	InsertSnippet(userId int, content string) error
+	InsertSnippet(userId string, content string) error
 	GetSnippetById(id int) (*Snippet, error)
 	GetSnippetsOfUser(userId int) ([]*Snippet, error)
 	DeleteSnippet(id int) (bool, error)

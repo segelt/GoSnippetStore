@@ -1,6 +1,7 @@
 package main
 
 import (
+	"snippetdemo/internal/middlewares"
 	"snippetdemo/internal/snippetdemo/handler"
 	"snippetdemo/internal/snippetdemo/service"
 )
@@ -12,7 +13,9 @@ func (srv *Server) MapHandlers() {
 	userservice := service.NewUserService(srv.client, srv.secretKey)
 	userHandler := handler.NewUserHandler(*userservice)
 
-	srv.router.HandleFunc("/create-snippet", snippetHandler.CreateSnippet)
+	middlewareManager := middlewares.MiddleWareManager{SecretKey: srv.secretKey}
+
+	srv.router.HandleFunc("/create-snippet", middlewares.MultipleMiddleware(snippetHandler.CreateSnippet, middlewareManager.Auth))
 	srv.router.HandleFunc("/createuser", userHandler.RegisterUser)
 	srv.router.HandleFunc("/verifyuser", userHandler.VerifyUser)
 }

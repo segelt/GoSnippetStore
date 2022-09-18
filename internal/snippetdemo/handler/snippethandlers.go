@@ -17,7 +17,6 @@ func NewSnippetHandler(svc service.SnippetService) *SnippetHandler {
 
 func (h *SnippetHandler) CreateSnippet(w http.ResponseWriter, r *http.Request) {
 	type CreateSnippetReq struct {
-		Userid  int
 		Content string
 	}
 
@@ -29,7 +28,8 @@ func (h *SnippetHandler) CreateSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.svc.InsertSnippet(req.Userid, req.Content)
+	userid := r.Context().Value("userid").(string)
+	err = h.svc.InsertSnippet(userid, req.Content)
 
 	if err != nil {
 		render(w, err, http.StatusInternalServerError)
