@@ -59,18 +59,6 @@ func (svc *CategoryService) GetCategories(filter CategoryFilter) (*[]Category, e
 	}
 
 	if filter.Description != nil {
-		// descfilter := fmt.Sprintf("/.*%s.*/", *filter.Description)
-		// f := bson.E{Key: "description", Value: bson.E{
-		// 	Key: "$regex",
-		// 	Value: primitive.Regex{
-		// 		Pattern: descfilter,
-		// 		// Options: "i",
-		// 	},
-		// }}
-
-		// f := bson.E{Key: "description", Value: bson.D{
-		// 	"$regex", primitive.Regex{Pattern: descfilter, Options: "i"}}}
-
 		f := bson.E{Key: "description",
 			Value: bson.D{{"$regex",
 				primitive.Regex{

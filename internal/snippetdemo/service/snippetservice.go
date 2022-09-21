@@ -19,6 +19,13 @@ type SnippetService struct {
 	Client *mongo.Client
 }
 
+// type InsertSnippetReq struct {
+// 	UserId     string
+// 	Content    string
+// 	Title      string
+// 	CategoryId *int
+// }
+
 func (svc *SnippetService) InsertSnippet(userId string, content string, title string, categoryid int) error {
 
 	categorycl := svc.Client.Database("snippetdb").Collection("categories")
