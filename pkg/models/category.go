@@ -57,8 +57,8 @@ func (c *CategoryModel) Filter(filter CategoryFilter) (*[]Category, error) {
 
 	if filter.Description != nil {
 		f := bson.E{Key: "description",
-			Value: bson.D{{"$regex",
-				primitive.Regex{
+			Value: bson.D{{Key: "$regex",
+				Value: primitive.Regex{
 					Pattern: *filter.Description,
 					Options: "i"}},
 			},
@@ -78,9 +78,9 @@ func (c *CategoryModel) Filter(filter CategoryFilter) (*[]Category, error) {
 		sortFilter = make(bson.D, 0)
 		switch *filter.SortBy {
 		case "description":
-			sortFilter = append(sortFilter, bson.E{"description", sortDir})
+			sortFilter = append(sortFilter, bson.E{Key: "description", Value: sortDir})
 		case "title":
-			sortFilter = append(sortFilter, bson.E{"title", sortDir})
+			sortFilter = append(sortFilter, bson.E{Key: "title", Value: sortDir})
 		case "count":
 			panic("Not implemented..")
 		}
@@ -117,28 +117,28 @@ func (c *CategoryModel) ByUser(userid string) ([]Category, error) {
 
 	snippetsCol := c.Client.Database("snippetdb").Collection("snippets")
 	cursor, err := snippetsCol.Aggregate(context.TODO(), bson.A{
-		bson.D{{"$match", bson.D{{"UserId", userid}}}},
+		bson.D{{Key: "$match", Value: bson.D{{Key: "UserId", Value: userid}}}},
 		bson.D{
-			{"$lookup",
-				bson.D{
-					{"from", "categories"},
-					{"localField", "category"},
-					{"foreignField", "categoryId"},
-					{"as", "category"},
+			{Key: "$lookup",
+				Value: bson.D{
+					{Key: "from", Value: "categories"},
+					{Key: "localField", Value: "category"},
+					{Key: "foreignField", Value: "categoryId"},
+					{Key: "as", Value: "category"},
 				},
 			},
 		},
-		bson.D{{"$unwind", bson.D{{"path", "$category"}}}},
+		bson.D{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$category"}}}},
 		bson.D{
-			{"$group",
-				bson.D{
-					{"_id",
-						bson.D{
-							{"categoryId", "$category.categoryId"},
-							{"categoryDescription", "$category.description"},
+			{Key: "$group",
+				Value: bson.D{
+					{Key: "_id",
+						Value: bson.D{
+							{Key: "categoryId", Value: "$category.categoryId"},
+							{Key: "categoryDescription", Value: "$category.description"},
 						},
 					},
-					{"amount", bson.D{{"$sum", 1}}},
+					{Key: "amount", Value: bson.D{{Key: "$sum", Value: 1}}},
 				},
 			},
 		},
@@ -161,8 +161,8 @@ func (c *CategoryModel) ByUser(userid string) ([]Category, error) {
 func (c *CategoryModel) Upsert(categoryId int, description string) error {
 	coll := c.Client.Database("snippetdb").Collection("categories")
 
-	filter_testcategory := bson.D{{"categoryId", categoryId}}
-	update_testcategory := bson.D{{"$set", bson.D{{"categoryId", categoryId}, {"description", description}}}}
+	filter_testcategory := bson.D{{Key: "categoryId", Value: categoryId}}
+	update_testcategory := bson.D{{Key: "$set", Value: bson.D{{Key: "categoryId", Value: categoryId}, {Key: "description", Value: description}}}}
 
 	opts := options.Update().SetUpsert(true)
 

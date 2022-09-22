@@ -31,11 +31,11 @@ func (svc *SnippetService) InsertSnippet(userId string, content string, title st
 	categorycl := svc.Client.Database("snippetdb").Collection("categories")
 	var cg models.Category
 
-	err = categorycl.FindOne(context.TODO(), bson.D{{"categoryId", categoryid}}).Decode(&cg)
+	err = categorycl.FindOne(context.TODO(), bson.D{{Key: "categoryId", Value: categoryid}}).Decode(&cg)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			log.Printf("No categories match this query. %d\n", categoryid)
-			return fmt.Errorf("No categories match this query. %d", categoryid)
+			return fmt.Errorf("no categories match this query. %d", categoryid)
 		}
 		return err
 	}
@@ -44,12 +44,12 @@ func (svc *SnippetService) InsertSnippet(userId string, content string, title st
 	// err := svc.Repo.InsertSnippet(userId, content)
 	createDate := time.Now()
 	expireTime := createDate.AddDate(0, 0, 10)
-	snippet := bson.D{{"content", content},
-		{"UserId", userId},
-		{"title", title},
-		{"category", categoryid},
-		{"created", createDate},
-		{"expireDate", expireTime}}
+	snippet := bson.D{{Key: "content", Value: content},
+		{Key: "UserId", Value: userId},
+		{Key: "title", Value: title},
+		{Key: "category", Value: categoryid},
+		{Key: "created", Value: createDate},
+		{Key: "expireDate", Value: expireTime}}
 
 	_, err := coll.InsertOne(context.TODO(), snippet)
 	return err

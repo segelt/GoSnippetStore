@@ -31,7 +31,7 @@ func CheckPassword(actualHashedPassword string, providedPassword string) error {
 func (svc *UserService) RegisterUser(username string, password string) error {
 	hashedpwd := helpers.HashStr(password)
 	coll := svc.Client.Database("snippetdb").Collection("users")
-	userd := bson.D{{"username", username}, {"password", hashedpwd}}
+	userd := bson.D{{Key: "username", Value: username}, {Key: "password", Value: hashedpwd}}
 	_, err := coll.InsertOne(context.TODO(), userd)
 	return err
 }
