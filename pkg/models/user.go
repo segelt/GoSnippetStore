@@ -45,7 +45,7 @@ func (u *UserModel) Get(userId string) (*User, error) {
 	userscol := u.Client.Database("snippetdb").Collection("users")
 
 	var user User
-	err := userscol.FindOne(context.TODO(), bson.M{"userId": userId}).Decode(&user)
+	err := userscol.FindOne(context.TODO(), bson.M{"_id": objectIDFromHex(userId)}).Decode(&user)
 
 	if err != nil {
 		return nil, err
