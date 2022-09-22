@@ -2,6 +2,8 @@ package models
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"log"
 	"time"
 
@@ -62,10 +64,48 @@ func (s *SnippetModel) Single(snippetId string) (*Snippet, error) {
 	return targetSnippet, nil
 }
 
-func (s *SnippetModel) Insert(userid string, content string, title string, categoryId int) error {
-	panic("Not implemented..")
+func (s *SnippetModel) Insert(userId string, content string, title string, categoryId int) error {
+
+	categorycl := s.Client.Database("snippetdb").Collection("categories")
+	var cg Category
+
+	err := categorycl.FindOne(context.TODO(), bson.D{{Key: "categoryId", Value: categoryId}}).Decode(&cg)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			log.Printf("No categories match this query. %d\n", categoryId)
+			return fmt.Errorf("no categories match this query. %d", categoryId)
+		}
+		return err
+	}
+
+	coll := s.Client.Database("snippetdb").Collection("snippets")
+	// err := svc.Repo.InsertSnippet(userId, content)
+	createDate := time.Now()
+	expireTime := createDate.AddDate(0, 0, 10)
+	snippet := bson.D{{Key: "content", Value: content},
+		{Key: "userId", Value: userId},
+		{Key: "title", Value: title},
+		{Key: "category", Value: categoryId},
+		{Key: "created", Value: createDate},
+		{Key: "expireDate", Value: expireTime}}
+
+	_, err = coll.InsertOne(context.TODO(), snippet)
+	return err
+
 }
 
 func (s *SnippetModel) Delete(snippetId string) (bool, error) {
-	panic("Not implemented..")
+
+	categorycl := s.Client.Database("snippetdb").Collection("snippets")
+
+	result, err := categorycl.DeleteOne(context.TODO(), bson.M{"_id": snippetId})
+	if err != nil {
+		return false, err
+	}
+
+	if result.DeletedCount == 0 {
+		return false, errors.New("no snippet was deleted")
+	}
+
+	return true, nil
 }
