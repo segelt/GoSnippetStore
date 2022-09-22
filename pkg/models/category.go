@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -45,7 +46,7 @@ type ByUserResult struct {
 	Count int `bson:"amount"`
 }
 
-func (c *CategoryModel) Filter(filter CategoryFilter) ([]Category, error) {
+func (c *CategoryModel) Filter(filter CategoryFilter) (*[]Category, error) {
 	coll := c.Client.Database("snippetdb").Collection("categories")
 
 	qry := bson.D{}
@@ -95,7 +96,21 @@ func (c *CategoryModel) Filter(filter CategoryFilter) ([]Category, error) {
 		return nil, err
 	}
 
-	return results, nil
+	return &results, nil
+}
+
+func (c *CategoryModel) Single(categoryId int) (*Category, error) {
+	coll := c.Client.Database("snippetdb").Collection("categories")
+
+	var targetCategory *Category
+	err := coll.FindOne(context.TODO(), bson.M{"categoryId": categoryId}).Decode(targetCategory)
+
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+
+	return targetCategory, nil
 }
 
 func (c *CategoryModel) ByUser(userid string) ([]Category, error) {
