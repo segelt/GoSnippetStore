@@ -48,8 +48,18 @@ func (s *SnippetModel) ByUser(userId string) ([]Snippet, error) {
 	return targetSnippets, nil
 }
 
-func (s *SnippetModel) Single(snippetId string) (Snippet, error) {
-	panic("Not implemented..")
+func (s *SnippetModel) Single(snippetId string) (*Snippet, error) {
+	coll := s.Client.Database("snippetdb").Collection("snippets")
+
+	var targetSnippet *Snippet
+	err := coll.FindOne(context.TODO(), bson.M{"userId": snippetId}).Decode(targetSnippet)
+
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+
+	return targetSnippet, nil
 }
 
 func (s *SnippetModel) Insert(userid string, content string, title string, categoryId int) error {
