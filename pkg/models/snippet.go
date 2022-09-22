@@ -23,10 +23,10 @@ type Snippet struct {
 }
 
 type SnippetService interface {
-	InsertSnippet(userId string, content string, title string, categoryid int) error
-	GetSnippetById(id int) (*Snippet, error)
-	GetSnippetsOfUser(userId int) ([]*Snippet, error)
-	DeleteSnippet(id int) (bool, error)
+	InsertSnippet(userId string, content string, title string, categoryId int) error
+	GetSnippetById(snippetId string) (*Snippet, error)
+	GetSnippetsOfUser(userId string) (*[]Snippet, error)
+	DeleteSnippet(snippetId string) (bool, error)
 }
 
 type SnippetModel struct {

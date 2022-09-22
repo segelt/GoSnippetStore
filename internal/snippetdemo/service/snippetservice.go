@@ -1,22 +1,15 @@
 package service
 
 import (
-	"context"
-	"fmt"
-	"log"
 	"snippetdemo/pkg/models"
-	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var err error
 
-type Snippet models.Snippet
-
 type SnippetService struct {
-	Client *mongo.Client
+	snippets models.SnippetModel
 }
 
 // type InsertSnippetReq struct {
@@ -26,44 +19,32 @@ type SnippetService struct {
 // 	CategoryId *int
 // }
 
-func (svc *SnippetService) InsertSnippet(userId string, content string, title string, categoryid int) error {
+func (svc *SnippetService) InsertSnippet(userId string, content string, title string, categoryId int) error {
 
-	categorycl := svc.Client.Database("snippetdb").Collection("categories")
-	var cg models.Category
-
-	err = categorycl.FindOne(context.TODO(), bson.D{{Key: "categoryId", Value: categoryid}}).Decode(&cg)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			log.Printf("No categories match this query. %d\n", categoryid)
-			return fmt.Errorf("no categories match this query. %d", categoryid)
-		}
-		return err
-	}
-
-	coll := svc.Client.Database("snippetdb").Collection("snippets")
-	// err := svc.Repo.InsertSnippet(userId, content)
-	createDate := time.Now()
-	expireTime := createDate.AddDate(0, 0, 10)
-	snippet := bson.D{{Key: "content", Value: content},
-		{Key: "userId", Value: userId},
-		{Key: "title", Value: title},
-		{Key: "category", Value: categoryid},
-		{Key: "created", Value: createDate},
-		{Key: "expireDate", Value: expireTime}}
-
-	_, err := coll.InsertOne(context.TODO(), snippet)
+	err := svc.snippets.Insert(userId, content, title, categoryId)
 	return err
 }
-func (svc *SnippetService) GetSnippetById(id int) (*Snippet, error) {
-	panic("Not implemented")
+func (svc *SnippetService) GetSnippetById(snippetId string) (*models.Snippet, error) {
+	snippet, err := svc.snippets.Single(snippetId)
+	if err != nil {
+		return nil, err
+	}
+
+	return snippet, nil
 }
-func (svc *SnippetService) GetSnippetsOfUser(userId int) ([]*Snippet, error) {
-	panic("Not implemented")
+func (svc *SnippetService) GetSnippetsOfUser(userId string) (*[]models.Snippet, error) {
+	snippets, err := svc.snippets.ByUser(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &snippets, nil
 }
-func (svc *SnippetService) DeleteSnippet(id int) (bool, error) {
-	panic("Not implemented")
+func (svc *SnippetService) DeleteSnippet(snippetId string) (bool, error) {
+	res, err := svc.snippets.Delete(snippetId)
+	return res, err
 }
 
 func NewSnippetService(client *mongo.Client) *SnippetService {
-	return &SnippetService{Client: client}
+	return &SnippetService{snippets: models.SnippetModel{Client: client}}
 }

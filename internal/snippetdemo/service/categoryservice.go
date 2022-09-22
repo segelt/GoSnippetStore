@@ -19,14 +19,14 @@ type CategoryFilter struct {
 }
 
 func (svc *CategoryService) AddCategory(categoryId int, description string) error {
-	err := (&svc.categories).Upsert(categoryId, description)
+	err := svc.categories.Upsert(categoryId, description)
 
 	return err
 }
 
 func (svc *CategoryService) GetCategoryById(categoryId int) (*models.Category, error) {
 
-	targetCategory, err := (&svc.categories).Single(categoryId)
+	targetCategory, err := svc.categories.Single(categoryId)
 
 	if err != nil {
 		return nil, err
@@ -36,7 +36,7 @@ func (svc *CategoryService) GetCategoryById(categoryId int) (*models.Category, e
 }
 
 func (svc *CategoryService) GetCategories(filter models.CategoryFilter) (*[]models.Category, error) {
-	results, err := (&svc.categories).Filter(filter)
+	results, err := svc.categories.Filter(filter)
 
 	if err != nil {
 		return nil, err
