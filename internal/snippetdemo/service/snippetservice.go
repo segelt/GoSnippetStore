@@ -45,7 +45,7 @@ func (svc *SnippetService) InsertSnippet(userId string, content string, title st
 	createDate := time.Now()
 	expireTime := createDate.AddDate(0, 0, 10)
 	snippet := bson.D{{Key: "content", Value: content},
-		{Key: "UserId", Value: userId},
+		{Key: "userId", Value: userId},
 		{Key: "title", Value: title},
 		{Key: "category", Value: categoryid},
 		{Key: "created", Value: createDate},
