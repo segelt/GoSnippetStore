@@ -3,7 +3,6 @@ package models
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -103,21 +102,16 @@ func (c *CategoryModel) Single(categoryId int) (*Category, error) {
 	coll := c.Client.Database("snippetdb").Collection("categories")
 
 	var targetCategory *Category
-	err := coll.FindOne(context.TODO(), bson.M{"categoryId": categoryId}).Decode(targetCategory)
+	err := coll.FindOne(context.TODO(), bson.M{"categoryId": categoryId}).Decode(&targetCategory)
 
-	if err != nil {
-		log.Fatal(err)
-		return nil, err
-	}
-
-	return targetCategory, nil
+	return targetCategory, err
 }
 
-func (c *CategoryModel) ByUser(userid string) ([]Category, error) {
+func (c *CategoryModel) ByUser(userid string) ([]ByUserResult, error) {
 
 	snippetsCol := c.Client.Database("snippetdb").Collection("snippets")
 	cursor, err := snippetsCol.Aggregate(context.TODO(), bson.A{
-		bson.D{{Key: "$match", Value: bson.D{{Key: "UserId", Value: userid}}}},
+		bson.D{{Key: "$match", Value: bson.D{{Key: "userId", Value: userid}}}},
 		bson.D{
 			{Key: "$lookup",
 				Value: bson.D{
@@ -155,7 +149,7 @@ func (c *CategoryModel) ByUser(userid string) ([]Category, error) {
 		return nil, err
 	}
 
-	return nil, err
+	return groupingResults, err
 }
 
 func (c *CategoryModel) Upsert(categoryId int, description string) error {

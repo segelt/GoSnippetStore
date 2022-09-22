@@ -34,15 +34,144 @@ func setupTest(t *testing.T) func(t *testing.T) {
 	}
 }
 
+func TestCategoriesFilterId(t *testing.T) {
+	teardownTest := setupTest(t)
+	defer teardownTest(t)
+
+	repo := &CategoryModel{Client: client}
+	var categoryid int = 1
+	filter := CategoryFilter{
+		CategoryId: &categoryid,
+	}
+
+	results, err := repo.Filter(filter)
+
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	expectedcount := 1
+	if len(*results) != expectedcount {
+		t.Fatalf("Expected category count does not match")
+	}
+
+	expectedDesc := "testcategory1"
+	if (*results)[0].Description != expectedDesc {
+		t.Fatalf("Expected category description does not match")
+	}
+}
+
+func TestCategoriesFilterDescSort(t *testing.T) {
+	teardownTest := setupTest(t)
+	defer teardownTest(t)
+
+	repo := &CategoryModel{Client: client}
+	var sortby string = "description"
+	var sortdirection string = "asc"
+	var description string = "testc"
+	filter := CategoryFilter{
+		SortBy:        &sortby,
+		SortDirection: &sortdirection,
+		Description:   &description,
+	}
+
+	results, err := repo.Filter(filter)
+
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	expectedcount := 2
+	if len(*results) != expectedcount {
+		t.Fatalf("Expected category count does not match")
+	}
+
+	expectedDescFirst := "testcategory1"
+	if (*results)[0].Description != expectedDescFirst {
+		t.Fatalf("Expected category description does not match")
+	}
+
+	expectedDescSecond := "testcategory2"
+	if (*results)[1].Description != expectedDescSecond {
+		t.Fatalf("Expected category description does not match")
+	}
+}
+
+func TestCategoriesFilterNoMatch(t *testing.T) {
+	teardownTest := setupTest(t)
+	defer teardownTest(t)
+
+	repo := &CategoryModel{Client: client}
+	var sortby string = "description"
+	var sortdirection string = "asc"
+	var description string = "testccc"
+	filter := CategoryFilter{
+		SortBy:        &sortby,
+		SortDirection: &sortdirection,
+		Description:   &description,
+	}
+
+	results, err := repo.Filter(filter)
+
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	expectedcount := 0
+	if len(*results) != expectedcount {
+		t.Fatalf("Expected category count does not match")
+	}
+}
+
+func TestCategoriesSingle(t *testing.T) {
+	teardownTest := setupTest(t)
+	defer teardownTest(t)
+
+	repo := &CategoryModel{Client: client}
+
+	results, err := repo.Single(1)
+
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	expectedDescription := "testcategory1"
+	if results.Description != expectedDescription {
+		t.Fatalf("Expected category description does not match")
+	}
+}
+
+func TestCategoriesSingleNonMatch(t *testing.T) {
+	teardownTest := setupTest(t)
+	defer teardownTest(t)
+
+	repo := &CategoryModel{Client: client}
+
+	results, err := repo.Single(1111111)
+
+	if err == nil {
+		t.Fatalf(err.Error())
+	}
+
+	if results != nil {
+		t.Fatalf("no category should have been returned")
+	}
+}
+
 func TestCategoriesByUserId(t *testing.T) {
 	teardownTest := setupTest(t)
 	defer teardownTest(t)
 
 	repo := &CategoryModel{Client: client}
 
-	_, err := repo.ByUser("632655b353adec83f7f2d6a5")
+	results, err := repo.ByUser("632655b353adec83f7f2d6a5")
 
 	if err != nil {
 		t.Fatalf(err.Error())
+	}
+
+	expectedcount := 2
+	if len(results) != expectedcount {
+		t.Fatalf("Expected category count does not match")
 	}
 }

@@ -6,8 +6,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var err error
-
 type SnippetService struct {
 	snippets models.SnippetModel
 }
