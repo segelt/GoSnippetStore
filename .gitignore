@@ -1,2 +1,3 @@
 internal/snippetdemo/service/snippet.go
 cmd/web/.env
+internal/snippetdemo/service/categoryservice_test.go

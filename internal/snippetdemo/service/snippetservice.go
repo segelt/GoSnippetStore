@@ -34,7 +34,7 @@ func (svc *SnippetService) InsertSnippet(userId string, content string, title st
 	err = categorycl.FindOne(context.TODO(), bson.D{{"categoryId", categoryid}}).Decode(&cg)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			log.Println("No categories match this query. %d\n", categoryid)
+			log.Printf("No categories match this query. %d\n", categoryid)
 			return fmt.Errorf("No categories match this query. %d", categoryid)
 		}
 		return err
