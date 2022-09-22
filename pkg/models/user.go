@@ -69,3 +69,22 @@ func (u *UserModel) Filter(filter UserFilter) (*[]User, error) {
 
 	return &users, nil
 }
+
+func (u *UserModel) FilterSingle(filter UserFilter) (*User, error) {
+	coll := u.Client.Database("snippetdb").Collection("users")
+
+	var user User
+	err := coll.FindOne(context.TODO(), bson.D{{Key: "username", Value: *filter.Username}}).Decode(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (u *UserModel) Insert(userName string, password string) error {
+	coll := u.Client.Database("snippetdb").Collection("users")
+	userd := bson.D{{Key: "username", Value: userName}, {Key: "password", Value: password}}
+	_, err := coll.InsertOne(context.TODO(), userd)
+	return err
+}

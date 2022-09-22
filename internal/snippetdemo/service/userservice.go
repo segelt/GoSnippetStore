@@ -1,17 +1,15 @@
 package service
 
 import (
-	"context"
 	"errors"
 	"snippetdemo/internal/snippetdemo/helpers"
 	"snippetdemo/pkg/models"
 
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type UserService struct {
-	Client    *mongo.Client
+	Users     models.UserModel
 	Secretkey string
 }
 
@@ -30,35 +28,30 @@ func CheckPassword(actualHashedPassword string, providedPassword string) error {
 
 func (svc *UserService) RegisterUser(username string, password string) error {
 	hashedpwd := helpers.HashStr(password)
-	coll := svc.Client.Database("snippetdb").Collection("users")
-	userd := bson.D{{Key: "username", Value: username}, {Key: "password", Value: hashedpwd}}
-	_, err := coll.InsertOne(context.TODO(), userd)
-	return err
+	return svc.Users.Insert(username, hashedpwd)
 }
-func (svc *UserService) VerifyUser(username string, password string) (string, error) {
-	db := svc.Client.Database("snippetdb")
-	userscol := db.Collection("users")
-
-	var user models.User
-	err := userscol.FindOne(context.TODO(), bson.M{"username": username}).Decode(&user)
+func (svc *UserService) VerifyUser(username string, password string) (*string, error) {
+	var user *models.User
+	userFilter := models.UserFilter{Username: &username}
+	user, err := svc.Users.FilterSingle(userFilter)
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	err = CheckPassword(user.Password, password)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	// User is validated, generate JWT token
 	generatedToken, err := svc.generateToken(user.IdString(), user.Username, svc.Secretkey)
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return generatedToken, nil
+	return &generatedToken, nil
 }
 
 func (svc *UserService) generateToken(userId string, username string, secretkey string) (string, error) {
@@ -68,5 +61,5 @@ func (svc *UserService) generateToken(userId string, username string, secretkey 
 }
 
 func NewUserService(client *mongo.Client, secretkey string) *UserService {
-	return &UserService{Client: client, Secretkey: secretkey}
+	return &UserService{Users: models.UserModel{Client: client}, Secretkey: secretkey}
 }
