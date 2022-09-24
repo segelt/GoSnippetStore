@@ -14,7 +14,7 @@ import (
 
 type Snippet struct {
 	ID       primitive.ObjectID `json:"snippetID" bson:"_id,omitempty"`
-	UserID   int                `json:"userID" bson:"userId"`
+	UserID   string             `json:"userID" bson:"userId"`
 	Category int                `json:"category" bson:"category"`
 	Title    string             `json:"title" bson:"title"`
 	Content  string             `json:"snippetContent" bson:"content"`
@@ -38,7 +38,6 @@ func (s *SnippetModel) ByUser(userId string) ([]Snippet, error) {
 
 	cursor, err := coll.Find(context.TODO(), bson.M{"userId": userId})
 	if err != nil {
-		log.Fatal(err)
 		return nil, err
 	}
 
