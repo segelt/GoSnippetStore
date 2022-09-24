@@ -57,7 +57,15 @@ func (u *UserModel) Get(userId string) (*User, error) {
 func (u *UserModel) Filter(filter UserFilter) (*[]User, error) {
 	coll := u.Client.Database("snippetdb").Collection("users")
 
-	cursor, err := coll.Find(context.TODO(), bson.D{{Key: "username", Value: *filter.Username}})
+	qry := bson.D{}
+	if filter.Username != nil {
+		f := bson.E{Key: "username",
+			Value: bson.D{{Key: "$regex",
+				Value: *filter.Username}}}
+		qry = append(qry, f)
+	}
+
+	cursor, err := coll.Find(context.TODO(), qry)
 	if err != nil {
 		return nil, err
 	}
