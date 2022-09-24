@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -79,6 +80,10 @@ func (u *UserModel) Filter(filter UserFilter) (*[]User, error) {
 }
 
 func (u *UserModel) FilterSingle(filter UserFilter) (*User, error) {
+	if filter.Username == nil {
+		return nil, errors.New("username filter cannot be nil")
+	}
+
 	coll := u.Client.Database("snippetdb").Collection("users")
 
 	var user User

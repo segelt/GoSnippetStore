@@ -24,11 +24,11 @@ func TestUsersGetById(t *testing.T) {
 		got_result, got_err := repo.Get(tc.input)
 
 		if (got_result == nil) != tc.userShouldBeNil {
-			t.Fatalf("Test: %s. Expected user result to be %v, got: %v", tc.name, tc.userShouldBeNil, got_result)
+			t.Fatalf("Test: %s. Expected user result to be %t, got: %s", tc.name, tc.userShouldBeNil, got_result)
 		}
 
 		if (got_err == nil) != tc.errShouldBeNil {
-			t.Fatalf("Test: %s. Expected user result to be %v, got: %v", tc.name, tc.errShouldBeNil, got_err)
+			t.Fatalf("Test: %s. Expected user result to be %t, got: %s", tc.name, tc.errShouldBeNil, got_err)
 		}
 	}
 }
@@ -68,7 +68,7 @@ func TestUsersFilter(t *testing.T) {
 		result, err := repo.Filter(tc.inputFilter)
 
 		if (err == nil) != tc.errShouldBeNil {
-			t.Fatalf("Test %s. Returned error value does not match the desired error value. Current error value: %v. Wanted error value: %v", tc.name, err, tc.errShouldBeNil)
+			t.Fatalf("Test %s. Returned error value does not match the desired error value. Current error value: %s. Wanted error value: %t", tc.name, err, tc.errShouldBeNil)
 		}
 
 		if *result != nil && len(*result) != tc.resultCount {
@@ -77,6 +77,50 @@ func TestUsersFilter(t *testing.T) {
 
 		if *result == nil && tc.resultCount != 0 {
 			t.Fatalf("Test %s. Mismatch on user amount returned. Wanted %d users returned. Got no users returned", tc.name, tc.resultCount)
+		}
+	}
+}
+
+func TestSingleUsersFilter(t *testing.T) {
+	teardownTest := setupTest(t)
+	defer teardownTest(t)
+
+	type test struct {
+		inputFilter       UserFilter
+		resultShouldBeNil bool
+		errShouldBeNil    bool
+		name              string
+	}
+
+	var fullUsername string = "test"
+	var partialUsername string = "te"
+	var partialInvalidUsername string = "abc"
+	tests := []test{
+		{
+			inputFilter: UserFilter{Username: &fullUsername}, resultShouldBeNil: false, errShouldBeNil: true, name: "Full username filter test",
+		},
+		{
+			inputFilter: UserFilter{Username: &partialUsername}, resultShouldBeNil: true, errShouldBeNil: false, name: "Partial username filter test (should not return any user)",
+		},
+		{
+			inputFilter: UserFilter{Username: &partialInvalidUsername}, resultShouldBeNil: true, errShouldBeNil: false, name: "Invalid username filter test",
+		},
+		{
+			inputFilter: UserFilter{}, resultShouldBeNil: true, errShouldBeNil: false, name: "Empty filter",
+		},
+	}
+
+	repo := &UserModel{Client: client}
+	for _, tc := range tests {
+		t.Logf("Running test %s\n", tc.name)
+		result, err := repo.FilterSingle(tc.inputFilter)
+
+		if (err == nil) != tc.errShouldBeNil {
+			t.Fatalf("Test %s. Returned error value does not match the desired error value. Current error value: %s. Wanted error value: %t", tc.name, err, tc.errShouldBeNil)
+		}
+
+		if (result == nil) != tc.resultShouldBeNil {
+			t.Fatalf("Test %s. Mismatch on returned user values. Expected users to be returned: %t. Any actual users returned: %t", tc.name, !tc.resultShouldBeNil, (result != nil))
 		}
 	}
 }
