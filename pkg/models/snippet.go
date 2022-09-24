@@ -53,10 +53,9 @@ func (s *SnippetModel) Single(snippetId string) (*Snippet, error) {
 	coll := s.Client.Database("snippetdb").Collection("snippets")
 
 	var targetSnippet *Snippet
-	err := coll.FindOne(context.TODO(), bson.M{"userId": snippetId}).Decode(targetSnippet)
+	err := coll.FindOne(context.TODO(), bson.M{"_id": objectIDFromHex(snippetId)}).Decode(&targetSnippet)
 
 	if err != nil {
-		log.Fatal(err)
 		return nil, err
 	}
 

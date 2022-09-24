@@ -8,8 +8,6 @@ func TestSnippetsByUserFilter(t *testing.T) {
 	teardownTest := setupTest(t)
 	defer teardownTest(t)
 
-	repo := &SnippetModel{Client: client}
-
 	type test struct {
 		userId      string
 		resultCount int
@@ -22,6 +20,7 @@ func TestSnippetsByUserFilter(t *testing.T) {
 		{userId: "632655b353adec83f7f2d6a51", resultCount: 0, errReturned: false, name: "User does not exist"},
 	}
 
+	repo := &SnippetModel{Client: client}
 	for _, tc := range tests {
 		res, err := repo.ByUser(tc.userId)
 		t.Logf("At test case %s", tc.name)
@@ -37,5 +36,34 @@ func TestSnippetsByUserFilter(t *testing.T) {
 			t.Fatalf("Expected count: %d, got nil result.", tc.resultCount)
 		}
 	}
+}
 
+func TestSnippetsRetrievedById(t *testing.T) {
+	teardownTest := setupTest(t)
+	defer teardownTest(t)
+
+	type test struct {
+		snippetId      string
+		resultReturned bool
+		errReturned    bool
+		name           string
+	}
+
+	tests := []test{
+		{snippetId: "63268461ea977bd27abcfcd7", resultReturned: true, errReturned: false, name: "Valid snippet via ID"},
+		{snippetId: "111111111111111111111111", resultReturned: false, errReturned: true, name: "Invalid snippet ID"},
+	}
+
+	repo := &SnippetModel{Client: client}
+	for _, tc := range tests {
+		res, err := repo.Single(tc.snippetId)
+		t.Logf("At test case %s", tc.name)
+		if (err != nil) != tc.errReturned {
+			t.Fatalf("Expected errReturned: %t. Got: %t", tc.errReturned, (err != nil))
+		}
+
+		if (res != nil) != tc.resultReturned {
+			t.Fatalf("Expected resultReturned: %t. Got %t", tc.resultReturned, (res != nil))
+		}
+	}
 }
