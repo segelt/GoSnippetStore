@@ -59,7 +59,13 @@ func (h *UserHandler) VerifyUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		render(w, err, http.StatusInternalServerError)
 	} else {
-		render(w, tokenstr, http.StatusCreated)
+		type respType struct {
+			Token string `json:"accesstoken"`
+		}
+
+		typerespType := respType{Token: *tokenstr}
+
+		render(w, typerespType, http.StatusCreated)
 	}
 
 }
