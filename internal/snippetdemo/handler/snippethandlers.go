@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"snippetdemo/internal/snippetdemo/service"
 	"snippetdemo/pkg/models"
@@ -71,4 +72,26 @@ func (h *SnippetHandler) ViewSnippets(w http.ResponseWriter, r *http.Request) {
 	} else {
 		render(w, snippets, http.StatusOK)
 	}
+}
+
+func (h *SnippetHandler) GetSnippet(w http.ResponseWriter, r *http.Request) {
+	queryId := r.URL.Query().Get("id")
+
+	if queryId == "" {
+		http.Error(w, "Bad id passed", http.StatusBadRequest)
+		return
+	}
+
+	snippet, err := h.svc.GetSnippetById(queryId)
+
+	if err != nil {
+		render(w, err, http.StatusInternalServerError)
+	}
+
+	userid := r.Context().Value("userid").(string)
+	if snippet.UserID != userid {
+		render(w, errors.New("selected snippet does not belong to your account"), http.StatusInternalServerError)
+	}
+
+	render(w, snippet, http.StatusOK)
 }
