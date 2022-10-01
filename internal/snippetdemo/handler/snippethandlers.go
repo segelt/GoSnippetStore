@@ -69,6 +69,6 @@ func (h *SnippetHandler) ViewSnippets(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		render(w, err, http.StatusInternalServerError)
 	} else {
-		render(w, snippets, http.StatusCreated)
+		render(w, snippets, http.StatusOK)
 	}
 }

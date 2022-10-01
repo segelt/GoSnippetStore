@@ -32,6 +32,16 @@ func (svc *SnippetService) GetSnippetById(snippetId string) (*models.Snippet, er
 }
 func (svc *SnippetService) GetSnippetsOfUser(filter models.SnippetFilter) (*[]models.Snippet, error) {
 
+	if filter.PageSize == nil {
+		var defaultPageSizeInt int = 50
+		filter.PageSize = &defaultPageSizeInt
+	}
+
+	if filter.Page == nil {
+		var defaultPage int = 0
+		filter.PageSize = &defaultPage
+	}
+
 	snippets, err := svc.snippets.ByUser(filter)
 	if err != nil {
 		return nil, err
