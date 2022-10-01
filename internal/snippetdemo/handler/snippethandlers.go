@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"snippetdemo/internal/snippetdemo/service"
+	"snippetdemo/pkg/models"
 )
 
 type SnippetHandler struct {
@@ -41,8 +42,29 @@ func (h *SnippetHandler) CreateSnippet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *SnippetHandler) ViewSnippets(w http.ResponseWriter, r *http.Request) {
+	type ViewSnippetReq struct {
+		SortBy        *string
+		SortDirection *string
+		Page          *int
+		PageSize      *int
+	}
+
+	var req ViewSnippetReq
+
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	userid := r.Context().Value("userid").(string)
-	snippets, err := h.svc.GetSnippetsOfUser(userid)
+	snippets, err := h.svc.GetSnippetsOfUser(models.SnippetFilter{
+		UserId:        &userid,
+		SortBy:        req.SortBy,
+		SortDirection: req.SortDirection,
+		PageSize:      req.PageSize,
+		Page:          req.Page,
+	})
 
 	if err != nil {
 		render(w, err, http.StatusInternalServerError)

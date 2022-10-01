@@ -22,7 +22,10 @@ func TestSnippetsByUserFilter(t *testing.T) {
 
 	repo := &SnippetModel{Client: client}
 	for _, tc := range tests {
-		res, err := repo.ByUser(tc.userId)
+		filter := SnippetFilter{
+			UserId: &tc.userId,
+		}
+		res, err := repo.ByUser(filter)
 		t.Logf("At test case %s", tc.name)
 		if (err != nil) != tc.errReturned {
 			t.Fatalf("Expected errReturned: %t. Got: %t", tc.errReturned, (err != nil))

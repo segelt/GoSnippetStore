@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Snippet struct {
@@ -20,6 +21,14 @@ type Snippet struct {
 	Content  string             `json:"snippetContent" bson:"content"`
 	Created  time.Time          `json:"dateCreated" bson:"created"`
 	Expires  time.Time          `json:"dateExpire" bson:"expireDate"`
+}
+
+type SnippetFilter struct {
+	UserId        *string
+	SortBy        *string
+	SortDirection *string
+	PageSize      *int
+	Page          *int
 }
 
 type SnippetService interface {
@@ -33,10 +42,42 @@ type SnippetModel struct {
 	Client *mongo.Client
 }
 
-func (s *SnippetModel) ByUser(userId string) ([]Snippet, error) {
+func (s *SnippetModel) ByUser(filter SnippetFilter) ([]Snippet, error) {
 	coll := s.Client.Database("snippetdb").Collection("snippets")
 
-	cursor, err := coll.Find(context.TODO(), bson.M{"userId": userId})
+	qry := bson.D{}
+	if filter.UserId != nil {
+		f := bson.E{Key: "userId", Value: *filter.UserId}
+		qry = append(qry, f)
+	}
+
+	var findOptions *options.FindOptions = options.Find()
+	var sortFilter bson.D
+	if filter.SortBy != nil {
+		sortDir := -1
+		if filter.SortDirection != nil && *filter.SortDirection == "asc" {
+			sortDir = 1
+		}
+
+		sortFilter = make(bson.D, 0)
+		switch *filter.SortBy {
+		case "category":
+			sortFilter = append(sortFilter, bson.E{Key: "category", Value: sortDir})
+		case "title":
+			sortFilter = append(sortFilter, bson.E{Key: "title", Value: sortDir})
+		case "count":
+			panic("Not implemented..")
+		}
+
+		findOptions.SetSort(sortFilter)
+	}
+
+	if filter.PageSize != nil && filter.Page != nil {
+		findOptions.SetSkip(int64(*filter.PageSize * *filter.Page))
+		findOptions.SetLimit(int64(*filter.PageSize))
+	}
+
+	cursor, err := coll.Find(context.TODO(), qry, findOptions)
 	if err != nil {
 		return nil, err
 	}

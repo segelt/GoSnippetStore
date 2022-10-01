@@ -30,8 +30,9 @@ func (svc *SnippetService) GetSnippetById(snippetId string) (*models.Snippet, er
 
 	return snippet, nil
 }
-func (svc *SnippetService) GetSnippetsOfUser(userId string) (*[]models.Snippet, error) {
-	snippets, err := svc.snippets.ByUser(userId)
+func (svc *SnippetService) GetSnippetsOfUser(filter models.SnippetFilter) (*[]models.Snippet, error) {
+
+	snippets, err := svc.snippets.ByUser(filter)
 	if err != nil {
 		return nil, err
 	}
