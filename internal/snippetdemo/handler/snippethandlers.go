@@ -38,5 +38,15 @@ func (h *SnippetHandler) CreateSnippet(w http.ResponseWriter, r *http.Request) {
 	} else {
 		render(w, "Success", http.StatusCreated)
 	}
+}
 
+func (h *SnippetHandler) ViewSnippets(w http.ResponseWriter, r *http.Request) {
+	userid := r.Context().Value("userid").(string)
+	snippets, err := h.svc.GetSnippetsOfUser(userid)
+
+	if err != nil {
+		render(w, err, http.StatusInternalServerError)
+	} else {
+		render(w, snippets, http.StatusCreated)
+	}
 }
