@@ -17,11 +17,19 @@ func main() {
 	}
 
 	mongoUri := os.Getenv("MONGODB_URI")
-	s := mongocl.Repo{}
-	err = s.Initialize(mongoUri)
+
+	client, err := mongocl.NewMongoDB(mongoUri)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = mongocl.SeedData(client)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	defer func() {
-		err = s.GracefulShutdownDbConnection()
+		err = mongocl.GracefulShutdownDbConnection(client)
 
 		if err != nil {
 			log.Fatal("Could not disconnect from db")
@@ -30,13 +38,8 @@ func main() {
 		}
 	}()
 
-	if err != nil {
-		log.Fatal(err)
-		panic(err)
-	}
-
 	jwtkey := os.Getenv("JWT_KEY")
-	srv := &Server{client: s.Client, secretKey: jwtkey}
+	srv := &Server{client: client, secretKey: jwtkey}
 	err = srv.StartServer()
 	fmt.Println("Started server")
 
