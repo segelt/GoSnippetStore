@@ -29,8 +29,8 @@ var objectIDFromHex = func(hex string) primitive.ObjectID {
 }
 
 type UserService interface {
-	RegisterUser(username string, password string) error
-	VerifyUser(username string, password string) (bool, error)
+	RegisterUser(ctx context.Context, username string, password string) error
+	VerifyUser(ctx context.Context, username string, password string) (bool, error)
 }
 
 type UserModel struct {
@@ -43,11 +43,11 @@ type UserFilter struct {
 	// Email    *string
 }
 
-func (u *UserModel) Get(userId string) (*User, error) {
+func (u *UserModel) Get(ctx context.Context, userId string) (*User, error) {
 	userscol := u.Client.Database(u.DBName).Collection("users")
 
 	var user User
-	err := userscol.FindOne(context.TODO(), bson.M{"_id": objectIDFromHex(userId)}).Decode(&user)
+	err := userscol.FindOne(ctx, bson.M{"_id": objectIDFromHex(userId)}).Decode(&user)
 
 	if err != nil {
 		return nil, err
@@ -56,7 +56,7 @@ func (u *UserModel) Get(userId string) (*User, error) {
 	return &user, nil
 }
 
-func (u *UserModel) Filter(filter UserFilter) (*[]User, error) {
+func (u *UserModel) Filter(ctx context.Context, filter UserFilter) (*[]User, error) {
 	coll := u.Client.Database(u.DBName).Collection("users")
 
 	qry := bson.D{}
@@ -67,20 +67,20 @@ func (u *UserModel) Filter(filter UserFilter) (*[]User, error) {
 		qry = append(qry, f)
 	}
 
-	cursor, err := coll.Find(context.TODO(), qry)
+	cursor, err := coll.Find(ctx, qry)
 	if err != nil {
 		return nil, err
 	}
 
 	var users []User
-	if err := cursor.All(context.TODO(), &users); err != nil {
+	if err := cursor.All(ctx, &users); err != nil {
 		return nil, err
 	}
 
 	return &users, nil
 }
 
-func (u *UserModel) FilterSingle(filter UserFilter) (*User, error) {
+func (u *UserModel) FilterSingle(ctx context.Context, filter UserFilter) (*User, error) {
 	if filter.Username == nil {
 		return nil, errors.New("username filter cannot be nil")
 	}
@@ -88,7 +88,7 @@ func (u *UserModel) FilterSingle(filter UserFilter) (*User, error) {
 	coll := u.Client.Database(u.DBName).Collection("users")
 
 	var user User
-	err := coll.FindOne(context.TODO(), bson.D{{Key: "username", Value: *filter.Username}}).Decode(&user)
+	err := coll.FindOne(ctx, bson.D{{Key: "username", Value: *filter.Username}}).Decode(&user)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +96,7 @@ func (u *UserModel) FilterSingle(filter UserFilter) (*User, error) {
 	return &user, nil
 }
 
-func (u *UserModel) Insert(userName string, password string) error {
+func (u *UserModel) Insert(ctx context.Context, userName string, password string) error {
 	coll := u.Client.Database(u.DBName).Collection("users")
 
 	qry := bson.D{}
@@ -110,13 +110,13 @@ func (u *UserModel) Insert(userName string, password string) error {
 	qry = append(qry, f)
 
 	var user User
-	err := coll.FindOne(context.TODO(), qry).Decode(&user)
+	err := coll.FindOne(ctx, qry).Decode(&user)
 
 	if err == nil {
 		return errors.New("user already exists")
 	}
 
 	userd := bson.D{{Key: "username", Value: userName}, {Key: "password", Value: password}}
-	_, err = coll.InsertOne(context.TODO(), userd)
+	_, err = coll.InsertOne(ctx, userd)
 	return err
 }

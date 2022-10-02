@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"snippetdemo/internal/snippetdemo/helpers"
 	"snippetdemo/pkg/models"
@@ -26,14 +27,14 @@ func CheckPassword(actualHashedPassword string, providedPassword string) error {
 	}
 }
 
-func (svc *UserService) RegisterUser(username string, password string) error {
+func (svc *UserService) RegisterUser(ctx context.Context, username string, password string) error {
 	hashedpwd := helpers.HashStr(password)
-	return svc.Users.Insert(username, hashedpwd)
+	return svc.Users.Insert(ctx, username, hashedpwd)
 }
-func (svc *UserService) VerifyUser(username string, password string) (*string, error) {
+func (svc *UserService) VerifyUser(ctx context.Context, username string, password string) (*string, error) {
 	var user *models.User
 	userFilter := models.UserFilter{Username: &username}
-	user, err := svc.Users.FilterSingle(userFilter)
+	user, err := svc.Users.FilterSingle(ctx, userFilter)
 
 	if err != nil {
 		return nil, err

@@ -30,7 +30,7 @@ func (h *UserHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.svc.RegisterUser(req.Username, req.Password)
+	err = h.svc.RegisterUser(r.Context(), req.Username, req.Password)
 
 	if err != nil {
 		render(w, err, http.StatusInternalServerError)
@@ -54,7 +54,7 @@ func (h *UserHandler) VerifyUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tokenstr, err := h.svc.VerifyUser(req.Username, req.Password)
+	tokenstr, err := h.svc.VerifyUser(r.Context(), req.Username, req.Password)
 
 	if err != nil {
 		render(w, err, http.StatusInternalServerError)
