@@ -32,10 +32,10 @@ type SnippetFilter struct {
 }
 
 type SnippetService interface {
-	InsertSnippet(userId string, content string, title string, categoryId int) error
-	GetSnippetById(snippetId string) (*Snippet, error)
-	GetSnippetsOfUser(userId string) (*[]Snippet, error)
-	DeleteSnippet(snippetId string) (bool, error)
+	InsertSnippet(ctx context.Context, userId string, content string, title string, categoryId int) error
+	GetSnippetById(ctx context.Context, snippetId string) (*Snippet, error)
+	GetSnippetsOfUser(ctx context.Context, userId string) (*[]Snippet, error)
+	DeleteSnippet(ctx context.Context, snippetId string) (bool, error)
 }
 
 type SnippetModel struct {
@@ -43,7 +43,7 @@ type SnippetModel struct {
 	DBName string
 }
 
-func (s *SnippetModel) ByUser(filter SnippetFilter) ([]Snippet, error) {
+func (s *SnippetModel) ByUser(ctx context.Context, filter SnippetFilter) ([]Snippet, error) {
 	coll := s.Client.Database(s.DBName).Collection("snippets")
 
 	qry := bson.D{}
@@ -78,24 +78,24 @@ func (s *SnippetModel) ByUser(filter SnippetFilter) ([]Snippet, error) {
 		findOptions.SetLimit(int64(*filter.PageSize))
 	}
 
-	cursor, err := coll.Find(context.TODO(), qry, findOptions)
+	cursor, err := coll.Find(ctx, qry, findOptions)
 	if err != nil {
 		return nil, err
 	}
 
 	var targetSnippets []Snippet
-	if err := cursor.All(context.TODO(), &targetSnippets); err != nil {
+	if err := cursor.All(ctx, &targetSnippets); err != nil {
 		return nil, err
 	}
 
 	return targetSnippets, nil
 }
 
-func (s *SnippetModel) Single(snippetId string) (*Snippet, error) {
+func (s *SnippetModel) Single(ctx context.Context, snippetId string) (*Snippet, error) {
 	coll := s.Client.Database(s.DBName).Collection("snippets")
 
 	var targetSnippet *Snippet
-	err := coll.FindOne(context.TODO(), bson.M{"_id": objectIDFromHex(snippetId)}).Decode(&targetSnippet)
+	err := coll.FindOne(ctx, bson.M{"_id": objectIDFromHex(snippetId)}).Decode(&targetSnippet)
 
 	if err != nil {
 		return nil, err
@@ -104,12 +104,12 @@ func (s *SnippetModel) Single(snippetId string) (*Snippet, error) {
 	return targetSnippet, nil
 }
 
-func (s *SnippetModel) Insert(userId string, content string, title string, categoryId int) error {
+func (s *SnippetModel) Insert(ctx context.Context, userId string, content string, title string, categoryId int) error {
 
 	categorycl := s.Client.Database(s.DBName).Collection("categories")
 	var cg Category
 
-	err := categorycl.FindOne(context.TODO(), bson.D{{Key: "categoryId", Value: categoryId}}).Decode(&cg)
+	err := categorycl.FindOne(ctx, bson.D{{Key: "categoryId", Value: categoryId}}).Decode(&cg)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			log.Printf("No categories match this query. %d\n", categoryId)
@@ -129,16 +129,16 @@ func (s *SnippetModel) Insert(userId string, content string, title string, categ
 		{Key: "created", Value: createDate},
 		{Key: "expireDate", Value: expireTime}}
 
-	_, err = coll.InsertOne(context.TODO(), snippet)
+	_, err = coll.InsertOne(ctx, snippet)
 	return err
 
 }
 
-func (s *SnippetModel) Delete(snippetId string) (bool, error) {
+func (s *SnippetModel) Delete(ctx context.Context, snippetId string) (bool, error) {
 
 	categorycl := s.Client.Database(s.DBName).Collection("snippets")
 
-	result, err := categorycl.DeleteOne(context.TODO(), bson.M{"_id": snippetId})
+	result, err := categorycl.DeleteOne(ctx, bson.M{"_id": snippetId})
 	if err != nil {
 		return false, err
 	}

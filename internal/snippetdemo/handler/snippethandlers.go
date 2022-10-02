@@ -33,7 +33,7 @@ func (h *SnippetHandler) CreateSnippet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userid := r.Context().Value("userid").(string)
-	err = h.svc.InsertSnippet(userid, req.Content, req.Title, req.CategoryId)
+	err = h.svc.InsertSnippet(r.Context(), userid, req.Content, req.Title, req.CategoryId)
 
 	if err != nil {
 		render(w, err, http.StatusInternalServerError)
@@ -59,7 +59,7 @@ func (h *SnippetHandler) ViewSnippets(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userid := r.Context().Value("userid").(string)
-	snippets, err := h.svc.GetSnippetsOfUser(models.SnippetFilter{
+	snippets, err := h.svc.GetSnippetsOfUser(r.Context(), models.SnippetFilter{
 		UserId:        &userid,
 		SortBy:        req.SortBy,
 		SortDirection: req.SortDirection,
@@ -82,7 +82,7 @@ func (h *SnippetHandler) GetSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	snippet, err := h.svc.GetSnippetById(queryId)
+	snippet, err := h.svc.GetSnippetById(r.Context(), queryId)
 
 	if err != nil {
 		render(w, err, http.StatusInternalServerError)
