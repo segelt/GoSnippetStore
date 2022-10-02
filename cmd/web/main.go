@@ -2,14 +2,14 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"snippetdemo/internal"
 	"snippetdemo/internal/database/mongocl"
 	"syscall"
-	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -44,16 +44,23 @@ func run() (<-chan error, error) {
 		return nil, internal.WrapErrorf(err, internal.ErrorCodeUnknown, "db seed")
 	}
 
-	jwtkey := os.Getenv("JWT_KEY")
-	srv := &Server{client: client, secretKey: jwtkey}
-	err = srv.StartServer()
-	if err != nil {
-		return nil, internal.WrapErrorf(err, internal.ErrorCodeUnknown, "server.start")
-	}
-
-	fmt.Println("Started server")
-
 	errC := make(chan error, 1)
+	go func() {
+		jwtkey := os.Getenv("JWT_KEY")
+		port := os.Getenv("PORT")
+		app := &App{
+			client:    client,
+			secretKey: jwtkey,
+			port:      port,
+		}
+		srv := app.NewServer()
+
+		log.Println("Starting server")
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			errC <- err
+		}
+	}()
+
 	ctx, stop := signal.NotifyContext(context.Background(),
 		os.Interrupt,
 		syscall.SIGTERM,
@@ -62,13 +69,11 @@ func run() (<-chan error, error) {
 	go func() {
 		<-ctx.Done()
 
-		fmt.Println("App shutdown.")
-		_, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		log.Println("App shutdown.")
 
 		defer func() {
 			mongocl.GracefulShutdownDbConnection(client)
 			stop()
-			cancel()
 			close(errC)
 		}()
 	}()

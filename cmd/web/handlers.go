@@ -6,7 +6,7 @@ import (
 	"snippetdemo/internal/snippetdemo/service"
 )
 
-func (srv *Server) MapHandlers() {
+func (srv *App) MapHandlers() {
 	dbname := "snippetdb"
 	snippetservice := service.NewSnippetService(srv.client, dbname)
 	snippetHandler := handler.NewSnippetHandler(*snippetservice)
