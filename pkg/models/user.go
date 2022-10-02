@@ -97,7 +97,25 @@ func (u *UserModel) FilterSingle(filter UserFilter) (*User, error) {
 
 func (u *UserModel) Insert(userName string, password string) error {
 	coll := u.Client.Database("snippetdb").Collection("users")
+
+	qry := bson.D{}
+	f := bson.E{Key: "username",
+		Value: bson.D{{Key: "$regex",
+			Value: primitive.Regex{
+				Pattern: userName,
+				Options: "i"}},
+		},
+	}
+	qry = append(qry, f)
+
+	var user User
+	err := coll.FindOne(context.TODO(), qry).Decode(&user)
+
+	if err == nil {
+		return errors.New("user already exists")
+	}
+
 	userd := bson.D{{Key: "username", Value: userName}, {Key: "password", Value: password}}
-	_, err := coll.InsertOne(context.TODO(), userd)
+	_, err = coll.InsertOne(context.TODO(), userd)
 	return err
 }

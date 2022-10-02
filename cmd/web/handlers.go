@@ -20,6 +20,7 @@ func (srv *Server) MapHandlers() {
 
 	srv.router.HandleFunc("/create-snippet", middlewares.MultipleMiddleware(snippetHandler.CreateSnippet, middlewareManager.Auth))
 	srv.router.HandleFunc("/snippets", middlewares.MultipleMiddleware(snippetHandler.ViewSnippets, middlewareManager.Auth))
+	srv.router.HandleFunc("/snippet", middlewares.MultipleMiddleware(snippetHandler.GetSnippet, middlewareManager.Auth))
 	srv.router.HandleFunc("/createuser", userHandler.RegisterUser)
 	srv.router.HandleFunc("/verifyuser", userHandler.VerifyUser)
 	srv.router.HandleFunc("/categories", categoryHandler.FilterCategories)
