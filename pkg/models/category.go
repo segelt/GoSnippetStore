@@ -18,8 +18,9 @@ type Category struct {
 }
 
 type CategoryService interface {
-	AddCategory(categoryId int, description string) error
-	GetCategoryById(categoryId int) (Category, error)
+	AddCategory(ctx context.Context, int, description string) error
+	GetCategoryById(ctx context.Context, categoryId int) (Category, error)
+	GetCategories(ctx context.Context, filter CategoryFilter) (*[]Category, error)
 }
 
 type CategoryModel struct {
@@ -46,7 +47,7 @@ type ByUserResult struct {
 	Count int `bson:"amount"`
 }
 
-func (c *CategoryModel) Filter(filter CategoryFilter) (*[]Category, error) {
+func (c *CategoryModel) Filter(ctx context.Context, filter CategoryFilter) (*[]Category, error) {
 	coll := c.Client.Database(c.DBName).Collection("categories")
 
 	qry := bson.D{}
@@ -88,10 +89,10 @@ func (c *CategoryModel) Filter(filter CategoryFilter) (*[]Category, error) {
 		sortOptions = options.Find().SetSort(sortFilter)
 	}
 
-	cursor, _ := coll.Find(context.TODO(), qry, sortOptions)
+	cursor, _ := coll.Find(ctx, qry, sortOptions)
 
 	var results []Category
-	if err := cursor.All(context.TODO(), &results); err != nil {
+	if err := cursor.All(ctx, &results); err != nil {
 		fmt.Println(err.Error())
 		return nil, err
 	}
@@ -99,19 +100,19 @@ func (c *CategoryModel) Filter(filter CategoryFilter) (*[]Category, error) {
 	return &results, nil
 }
 
-func (c *CategoryModel) Single(categoryId int) (*Category, error) {
+func (c *CategoryModel) Single(ctx context.Context, categoryId int) (*Category, error) {
 	coll := c.Client.Database(c.DBName).Collection("categories")
 
 	var targetCategory *Category
-	err := coll.FindOne(context.TODO(), bson.M{"categoryId": categoryId}).Decode(&targetCategory)
+	err := coll.FindOne(ctx, bson.M{"categoryId": categoryId}).Decode(&targetCategory)
 
 	return targetCategory, err
 }
 
-func (c *CategoryModel) ByUser(userid string) ([]ByUserResult, error) {
+func (c *CategoryModel) ByUser(ctx context.Context, userid string) ([]ByUserResult, error) {
 
 	snippetsCol := c.Client.Database(c.DBName).Collection("snippets")
-	cursor, err := snippetsCol.Aggregate(context.TODO(), bson.A{
+	cursor, err := snippetsCol.Aggregate(ctx, bson.A{
 		bson.D{{Key: "$match", Value: bson.D{{Key: "userId", Value: userid}}}},
 		bson.D{
 			{Key: "$lookup",
@@ -144,7 +145,7 @@ func (c *CategoryModel) ByUser(userid string) ([]ByUserResult, error) {
 	}
 
 	var groupingResults []ByUserResult
-	err = cursor.All(context.TODO(), &groupingResults)
+	err = cursor.All(ctx, &groupingResults)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
@@ -153,7 +154,7 @@ func (c *CategoryModel) ByUser(userid string) ([]ByUserResult, error) {
 	return groupingResults, err
 }
 
-func (c *CategoryModel) Upsert(categoryId int, description string) error {
+func (c *CategoryModel) Upsert(ctx context.Context, categoryId int, description string) error {
 	coll := c.Client.Database(c.DBName).Collection("categories")
 
 	filter_testcategory := bson.D{{Key: "categoryId", Value: categoryId}}
@@ -161,7 +162,7 @@ func (c *CategoryModel) Upsert(categoryId int, description string) error {
 
 	opts := options.Update().SetUpsert(true)
 
-	_, err := coll.UpdateOne(context.TODO(), filter_testcategory, update_testcategory, opts)
+	_, err := coll.UpdateOne(ctx, filter_testcategory, update_testcategory, opts)
 	if err != nil {
 		return err
 	}

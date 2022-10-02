@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"snippetdemo/pkg/models"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -18,15 +19,15 @@ type CategoryFilter struct {
 	Count         *int
 }
 
-func (svc *CategoryService) AddCategory(categoryId int, description string) error {
-	err := svc.categories.Upsert(categoryId, description)
+func (svc *CategoryService) AddCategory(ctx context.Context, categoryId int, description string) error {
+	err := svc.categories.Upsert(ctx, categoryId, description)
 
 	return err
 }
 
-func (svc *CategoryService) GetCategoryById(categoryId int) (*models.Category, error) {
+func (svc *CategoryService) GetCategoryById(ctx context.Context, categoryId int) (*models.Category, error) {
 
-	targetCategory, err := svc.categories.Single(categoryId)
+	targetCategory, err := svc.categories.Single(ctx, categoryId)
 
 	if err != nil {
 		return nil, err
@@ -35,8 +36,8 @@ func (svc *CategoryService) GetCategoryById(categoryId int) (*models.Category, e
 	return targetCategory, nil
 }
 
-func (svc *CategoryService) GetCategories(filter models.CategoryFilter) (*[]models.Category, error) {
-	results, err := svc.categories.Filter(filter)
+func (svc *CategoryService) GetCategories(ctx context.Context, filter models.CategoryFilter) (*[]models.Category, error) {
+	results, err := svc.categories.Filter(ctx, filter)
 
 	if err != nil {
 		return nil, err

@@ -34,7 +34,7 @@ func (h *CategoryHandler) FilterCategories(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	res, err := h.svc.GetCategories(models.CategoryFilter{
+	res, err := h.svc.GetCategories(r.Context(), models.CategoryFilter{
 		CategoryId:    req.CategoryId,
 		Description:   req.Description,
 		SortBy:        req.SortBy,
