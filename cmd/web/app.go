@@ -20,6 +20,7 @@ func (app *App) NewServer() *http.Server {
 
 	//** CORS SPECIFIC SECTION **//
 	allowedRouter := cors.AllowAll().Handler(app.router)
+	// err := http.ListenAndServe(":4000", app.router)
 
 	server := &http.Server{
 		Addr:    app.port,
