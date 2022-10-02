@@ -6,7 +6,7 @@ func TestUsersGetById(t *testing.T) {
 	teardownTest := setupTest(t)
 	defer teardownTest(t)
 
-	repo := &UserModel{Client: client}
+	repo := &UserModel{Client: client, DBName: DBName}
 
 	type test struct {
 		input           string
@@ -62,7 +62,7 @@ func TestUsersFilter(t *testing.T) {
 		},
 	}
 
-	repo := &UserModel{Client: client}
+	repo := &UserModel{Client: client, DBName: DBName}
 	for _, tc := range tests {
 		t.Logf("Running test %s\n", tc.name)
 		result, err := repo.Filter(tc.inputFilter)
@@ -110,7 +110,7 @@ func TestSingleUsersFilter(t *testing.T) {
 		},
 	}
 
-	repo := &UserModel{Client: client}
+	repo := &UserModel{Client: client, DBName: DBName}
 	for _, tc := range tests {
 		t.Logf("Running test %s\n", tc.name)
 		result, err := repo.FilterSingle(tc.inputFilter)

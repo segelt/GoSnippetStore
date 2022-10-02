@@ -54,6 +54,6 @@ func (svc *SnippetService) DeleteSnippet(snippetId string) (bool, error) {
 	return res, err
 }
 
-func NewSnippetService(client *mongo.Client) *SnippetService {
-	return &SnippetService{snippets: models.SnippetModel{Client: client}}
+func NewSnippetService(client *mongo.Client, DBName string) *SnippetService {
+	return &SnippetService{snippets: models.SnippetModel{Client: client, DBName: DBName}}
 }

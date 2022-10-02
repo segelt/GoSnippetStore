@@ -62,7 +62,8 @@ func (s *Repo) Initialize(uri string) error {
 }
 
 func (s *Repo) seedCategories() error {
-	coll := s.Client.Database("snippetdb").Collection("categories")
+	dbname := "snippetdb"
+	coll := s.Client.Database(dbname).Collection("categories")
 
 	filter_testcategory1 := bson.D{{"categoryId", 1}}
 	update_testcategory1 := bson.D{{"$set", bson.D{{"categoryId", 1}, {"description", "testcategory1"}}}}

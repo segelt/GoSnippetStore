@@ -7,13 +7,14 @@ import (
 )
 
 func (srv *Server) MapHandlers() {
-	snippetservice := service.NewSnippetService(srv.client)
+	dbname := "snippetdb"
+	snippetservice := service.NewSnippetService(srv.client, dbname)
 	snippetHandler := handler.NewSnippetHandler(*snippetservice)
 
-	userservice := service.NewUserService(srv.client, srv.secretKey)
+	userservice := service.NewUserService(srv.client, srv.secretKey, dbname)
 	userHandler := handler.NewUserHandler(*userservice)
 
-	categoryService := service.NewCategoryService(srv.client)
+	categoryService := service.NewCategoryService(srv.client, dbname)
 	categoryHandler := handler.NewCategoryHandler(*categoryService)
 
 	middlewareManager := middlewares.MiddleWareManager{SecretKey: srv.secretKey}

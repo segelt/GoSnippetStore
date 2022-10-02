@@ -40,10 +40,11 @@ type SnippetService interface {
 
 type SnippetModel struct {
 	Client *mongo.Client
+	DBName string
 }
 
 func (s *SnippetModel) ByUser(filter SnippetFilter) ([]Snippet, error) {
-	coll := s.Client.Database("snippetdb").Collection("snippets")
+	coll := s.Client.Database(s.DBName).Collection("snippets")
 
 	qry := bson.D{}
 	if filter.UserId != nil {
@@ -91,7 +92,7 @@ func (s *SnippetModel) ByUser(filter SnippetFilter) ([]Snippet, error) {
 }
 
 func (s *SnippetModel) Single(snippetId string) (*Snippet, error) {
-	coll := s.Client.Database("snippetdb").Collection("snippets")
+	coll := s.Client.Database(s.DBName).Collection("snippets")
 
 	var targetSnippet *Snippet
 	err := coll.FindOne(context.TODO(), bson.M{"_id": objectIDFromHex(snippetId)}).Decode(&targetSnippet)
@@ -105,7 +106,7 @@ func (s *SnippetModel) Single(snippetId string) (*Snippet, error) {
 
 func (s *SnippetModel) Insert(userId string, content string, title string, categoryId int) error {
 
-	categorycl := s.Client.Database("snippetdb").Collection("categories")
+	categorycl := s.Client.Database(s.DBName).Collection("categories")
 	var cg Category
 
 	err := categorycl.FindOne(context.TODO(), bson.D{{Key: "categoryId", Value: categoryId}}).Decode(&cg)
@@ -117,7 +118,7 @@ func (s *SnippetModel) Insert(userId string, content string, title string, categ
 		return err
 	}
 
-	coll := s.Client.Database("snippetdb").Collection("snippets")
+	coll := s.Client.Database(s.DBName).Collection("snippets")
 	// err := svc.Repo.InsertSnippet(userId, content)
 	createDate := time.Now()
 	expireTime := createDate.AddDate(0, 0, 10)
@@ -135,7 +136,7 @@ func (s *SnippetModel) Insert(userId string, content string, title string, categ
 
 func (s *SnippetModel) Delete(snippetId string) (bool, error) {
 
-	categorycl := s.Client.Database("snippetdb").Collection("snippets")
+	categorycl := s.Client.Database(s.DBName).Collection("snippets")
 
 	result, err := categorycl.DeleteOne(context.TODO(), bson.M{"_id": snippetId})
 	if err != nil {

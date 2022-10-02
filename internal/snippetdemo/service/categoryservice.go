@@ -45,6 +45,6 @@ func (svc *CategoryService) GetCategories(filter models.CategoryFilter) (*[]mode
 	return results, nil
 }
 
-func NewCategoryService(client *mongo.Client) *CategoryService {
-	return &CategoryService{categories: models.CategoryModel{Client: client}}
+func NewCategoryService(client *mongo.Client, DBName string) *CategoryService {
+	return &CategoryService{categories: models.CategoryModel{Client: client, DBName: DBName}}
 }

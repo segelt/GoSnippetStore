@@ -60,6 +60,6 @@ func (svc *UserService) generateToken(userId string, username string, secretkey 
 	return mgr.GenerateJWT(userId, username)
 }
 
-func NewUserService(client *mongo.Client, secretkey string) *UserService {
-	return &UserService{Users: models.UserModel{Client: client}, Secretkey: secretkey}
+func NewUserService(client *mongo.Client, secretkey string, DBName string) *UserService {
+	return &UserService{Users: models.UserModel{Client: client, DBName: DBName}, Secretkey: secretkey}
 }

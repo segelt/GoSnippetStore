@@ -1,0 +1,325 @@
+[{
+  "_id": {
+    "$oid": "63268461ea977bd27abcfcd7"
+  },
+  "content": "test",
+  "title": "testsnippet",
+  "category": 1,
+  "created": {
+    "$date": {
+      "$numberLong": "1663468635463"
+    }
+  },
+  "expireDate": {
+    "$date": {
+      "$numberLong": "1664332635463"
+    }
+  },
+  "userId": "632655b353adec83f7f2d6a5"
+},{
+  "_id": {
+    "$oid": "6327ad56db0669fde0c1458a"
+  },
+  "content": "test2",
+  "title": "testsnippet2",
+  "category": 1,
+  "created": {
+    "$date": {
+      "$numberLong": "1663544662046"
+    }
+  },
+  "expireDate": {
+    "$date": {
+      "$numberLong": "1664408662046"
+    }
+  },
+  "userId": "632655b353adec83f7f2d6a5"
+},{
+  "_id": {
+    "$oid": "6327ad5fdb0669fde0c1458b"
+  },
+  "content": "test3",
+  "title": "testsnippet3",
+  "category": 1,
+  "created": {
+    "$date": {
+      "$numberLong": "1663544671152"
+    }
+  },
+  "expireDate": {
+    "$date": {
+      "$numberLong": "1664408671152"
+    }
+  },
+  "userId": "632655b353adec83f7f2d6a5"
+},{
+  "_id": {
+    "$oid": "6327ad63db0669fde0c1458c"
+  },
+  "content": "test4",
+  "title": "testsnippet4",
+  "category": 1,
+  "created": {
+    "$date": {
+      "$numberLong": "1663544675632"
+    }
+  },
+  "expireDate": {
+    "$date": {
+      "$numberLong": "1664408675632"
+    }
+  },
+  "userId": "632655b353adec83f7f2d6a5"
+},{
+  "_id": {
+    "$oid": "6327ad68db0669fde0c1458d"
+  },
+  "content": "test5",
+  "title": "testsnippet5",
+  "category": 2,
+  "created": {
+    "$date": {
+      "$numberLong": "1663544680446"
+    }
+  },
+  "expireDate": {
+    "$date": {
+      "$numberLong": "1664408680446"
+    }
+  },
+  "userId": "632655b353adec83f7f2d6a5"
+},{
+  "_id": {
+    "$oid": "6327ad6edb0669fde0c1458e"
+  },
+  "content": "test6",
+  "title": "testsnippet6",
+  "category": 2,
+  "created": {
+    "$date": {
+      "$numberLong": "1663544686051"
+    }
+  },
+  "expireDate": {
+    "$date": {
+      "$numberLong": "1664408686051"
+    }
+  },
+  "userId": "632655b353adec83f7f2d6a5"
+},{
+  "_id": {
+    "$oid": "6327ad7cdb0669fde0c1458f"
+  },
+  "content": "test7",
+  "title": "testsnippet7",
+  "category": 2,
+  "created": {
+    "$date": {
+      "$numberLong": "1663544700160"
+    }
+  },
+  "expireDate": {
+    "$date": {
+      "$numberLong": "1664408700160"
+    }
+  },
+  "userId": "632655b353adec83f7f2d6a5"
+},{
+  "_id": {
+    "$oid": "6338dd3c1007b5fb5f078f3f"
+  },
+  "content": "test snippet 2 content",
+  "userId": "6338dd141007b5fb5f078f3e",
+  "title": "test snippet 2 content",
+  "category": 2,
+  "created": {
+    "$date": {
+      "$numberLong": "1664671036869"
+    }
+  },
+  "expireDate": {
+    "$date": {
+      "$numberLong": "1665535036869"
+    }
+  }
+},{
+  "_id": {
+    "$oid": "6338dd411007b5fb5f078f40"
+  },
+  "content": "test snippet 3 content",
+  "userId": "6338dd141007b5fb5f078f3e",
+  "title": "test snippet 3",
+  "category": 2,
+  "created": {
+    "$date": {
+      "$numberLong": "1664671041812"
+    }
+  },
+  "expireDate": {
+    "$date": {
+      "$numberLong": "1665535041812"
+    }
+  }
+},{
+  "_id": {
+    "$oid": "6338dd441007b5fb5f078f41"
+  },
+  "content": "test snippet 4 content",
+  "userId": "6338dd141007b5fb5f078f3e",
+  "title": "test snippet 4",
+  "category": 2,
+  "created": {
+    "$date": {
+      "$numberLong": "1664671044908"
+    }
+  },
+  "expireDate": {
+    "$date": {
+      "$numberLong": "1665535044908"
+    }
+  }
+},{
+  "_id": {
+    "$oid": "6338dd481007b5fb5f078f42"
+  },
+  "content": "test snippet 5 content",
+  "userId": "6338dd141007b5fb5f078f3e",
+  "title": "test snippet 5",
+  "category": 1,
+  "created": {
+    "$date": {
+      "$numberLong": "1664671048789"
+    }
+  },
+  "expireDate": {
+    "$date": {
+      "$numberLong": "1665535048789"
+    }
+  }
+},{
+  "_id": {
+    "$oid": "6338dd4c1007b5fb5f078f43"
+  },
+  "content": "test snippet 6 content",
+  "userId": "6338dd141007b5fb5f078f3e",
+  "title": "test snippet 6",
+  "category": 1,
+  "created": {
+    "$date": {
+      "$numberLong": "1664671052262"
+    }
+  },
+  "expireDate": {
+    "$date": {
+      "$numberLong": "1665535052262"
+    }
+  }
+},{
+  "_id": {
+    "$oid": "6338dd5b1007b5fb5f078f44"
+  },
+  "content": "test snippet 7 content",
+  "userId": "6338dd141007b5fb5f078f3e",
+  "title": "test snippet 7",
+  "category": 2,
+  "created": {
+    "$date": {
+      "$numberLong": "1664671067382"
+    }
+  },
+  "expireDate": {
+    "$date": {
+      "$numberLong": "1665535067382"
+    }
+  }
+},{
+  "_id": {
+    "$oid": "6338dd711007b5fb5f078f45"
+  },
+  "content": "test snippet 8 content",
+  "userId": "6338dd141007b5fb5f078f3e",
+  "title": "test snippet 8",
+  "category": 1,
+  "created": {
+    "$date": {
+      "$numberLong": "1664671089548"
+    }
+  },
+  "expireDate": {
+    "$date": {
+      "$numberLong": "1665535089548"
+    }
+  }
+},{
+  "_id": {
+    "$oid": "6338dd891007b5fb5f078f46"
+  },
+  "content": "s1",
+  "userId": "6338dd0f1007b5fb5f078f3d",
+  "title": "t1",
+  "category": 1,
+  "created": {
+    "$date": {
+      "$numberLong": "1664671113228"
+    }
+  },
+  "expireDate": {
+    "$date": {
+      "$numberLong": "1665535113228"
+    }
+  }
+},{
+  "_id": {
+    "$oid": "6338dd8c1007b5fb5f078f47"
+  },
+  "content": "s2",
+  "userId": "6338dd0f1007b5fb5f078f3d",
+  "title": "t2",
+  "category": 1,
+  "created": {
+    "$date": {
+      "$numberLong": "1664671116694"
+    }
+  },
+  "expireDate": {
+    "$date": {
+      "$numberLong": "1665535116694"
+    }
+  }
+},{
+  "_id": {
+    "$oid": "6338dd921007b5fb5f078f48"
+  },
+  "content": "s3",
+  "userId": "6338dd0f1007b5fb5f078f3d",
+  "title": "t3",
+  "category": 2,
+  "created": {
+    "$date": {
+      "$numberLong": "1664671122777"
+    }
+  },
+  "expireDate": {
+    "$date": {
+      "$numberLong": "1665535122777"
+    }
+  }
+},{
+  "_id": {
+    "$oid": "6338dd9d1007b5fb5f078f49"
+  },
+  "content": "s4",
+  "userId": "6338dd0f1007b5fb5f078f3d",
+  "title": "t4",
+  "category": 1,
+  "created": {
+    "$date": {
+      "$numberLong": "1664671133901"
+    }
+  },
+  "expireDate": {
+    "$date": {
+      "$numberLong": "1665535133901"
+    }
+  }
+}]

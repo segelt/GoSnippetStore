@@ -24,6 +24,7 @@ type CategoryService interface {
 
 type CategoryModel struct {
 	Client *mongo.Client
+	DBName string
 }
 
 type CategoryFilter struct {
@@ -46,7 +47,7 @@ type ByUserResult struct {
 }
 
 func (c *CategoryModel) Filter(filter CategoryFilter) (*[]Category, error) {
-	coll := c.Client.Database("snippetdb").Collection("categories")
+	coll := c.Client.Database(c.DBName).Collection("categories")
 
 	qry := bson.D{}
 	if filter.CategoryId != nil {
@@ -99,7 +100,7 @@ func (c *CategoryModel) Filter(filter CategoryFilter) (*[]Category, error) {
 }
 
 func (c *CategoryModel) Single(categoryId int) (*Category, error) {
-	coll := c.Client.Database("snippetdb").Collection("categories")
+	coll := c.Client.Database(c.DBName).Collection("categories")
 
 	var targetCategory *Category
 	err := coll.FindOne(context.TODO(), bson.M{"categoryId": categoryId}).Decode(&targetCategory)
@@ -109,7 +110,7 @@ func (c *CategoryModel) Single(categoryId int) (*Category, error) {
 
 func (c *CategoryModel) ByUser(userid string) ([]ByUserResult, error) {
 
-	snippetsCol := c.Client.Database("snippetdb").Collection("snippets")
+	snippetsCol := c.Client.Database(c.DBName).Collection("snippets")
 	cursor, err := snippetsCol.Aggregate(context.TODO(), bson.A{
 		bson.D{{Key: "$match", Value: bson.D{{Key: "userId", Value: userid}}}},
 		bson.D{
@@ -153,7 +154,7 @@ func (c *CategoryModel) ByUser(userid string) ([]ByUserResult, error) {
 }
 
 func (c *CategoryModel) Upsert(categoryId int, description string) error {
-	coll := c.Client.Database("snippetdb").Collection("categories")
+	coll := c.Client.Database(c.DBName).Collection("categories")
 
 	filter_testcategory := bson.D{{Key: "categoryId", Value: categoryId}}
 	update_testcategory := bson.D{{Key: "$set", Value: bson.D{{Key: "categoryId", Value: categoryId}, {Key: "description", Value: description}}}}

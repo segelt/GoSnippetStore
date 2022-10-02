@@ -1,0 +1,13 @@
+[{
+  "_id": {
+    "$oid": "6326822ec829bf48efce334e"
+  },
+  "categoryId": 1,
+  "description": "testcategory1"
+},{
+  "_id": {
+    "$oid": "6326822ec829bf48efce3350"
+  },
+  "categoryId": 2,
+  "description": "testcategory2"
+}]

@@ -35,6 +35,7 @@ type UserService interface {
 
 type UserModel struct {
 	Client *mongo.Client
+	DBName string
 }
 
 type UserFilter struct {
@@ -43,7 +44,7 @@ type UserFilter struct {
 }
 
 func (u *UserModel) Get(userId string) (*User, error) {
-	userscol := u.Client.Database("snippetdb").Collection("users")
+	userscol := u.Client.Database(u.DBName).Collection("users")
 
 	var user User
 	err := userscol.FindOne(context.TODO(), bson.M{"_id": objectIDFromHex(userId)}).Decode(&user)
@@ -56,7 +57,7 @@ func (u *UserModel) Get(userId string) (*User, error) {
 }
 
 func (u *UserModel) Filter(filter UserFilter) (*[]User, error) {
-	coll := u.Client.Database("snippetdb").Collection("users")
+	coll := u.Client.Database(u.DBName).Collection("users")
 
 	qry := bson.D{}
 	if filter.Username != nil {
@@ -84,7 +85,7 @@ func (u *UserModel) FilterSingle(filter UserFilter) (*User, error) {
 		return nil, errors.New("username filter cannot be nil")
 	}
 
-	coll := u.Client.Database("snippetdb").Collection("users")
+	coll := u.Client.Database(u.DBName).Collection("users")
 
 	var user User
 	err := coll.FindOne(context.TODO(), bson.D{{Key: "username", Value: *filter.Username}}).Decode(&user)
@@ -96,7 +97,7 @@ func (u *UserModel) FilterSingle(filter UserFilter) (*User, error) {
 }
 
 func (u *UserModel) Insert(userName string, password string) error {
-	coll := u.Client.Database("snippetdb").Collection("users")
+	coll := u.Client.Database(u.DBName).Collection("users")
 
 	qry := bson.D{}
 	f := bson.E{Key: "username",

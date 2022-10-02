@@ -11,6 +11,7 @@ import (
 )
 
 var client *mongo.Client
+var DBName string = "snippetdbtest"
 
 func setupTest(t *testing.T) func(t *testing.T) {
 
@@ -38,7 +39,7 @@ func TestCategoriesFilterId(t *testing.T) {
 	teardownTest := setupTest(t)
 	defer teardownTest(t)
 
-	repo := &CategoryModel{Client: client}
+	repo := &CategoryModel{Client: client, DBName: DBName}
 	var categoryid int = 1
 	filter := CategoryFilter{
 		CategoryId: &categoryid,
@@ -65,7 +66,7 @@ func TestCategoriesFilterDescSort(t *testing.T) {
 	teardownTest := setupTest(t)
 	defer teardownTest(t)
 
-	repo := &CategoryModel{Client: client}
+	repo := &CategoryModel{Client: client, DBName: DBName}
 	var sortby string = "description"
 	var sortdirection string = "asc"
 	var description string = "testc"
@@ -101,7 +102,7 @@ func TestCategoriesFilterNoMatch(t *testing.T) {
 	teardownTest := setupTest(t)
 	defer teardownTest(t)
 
-	repo := &CategoryModel{Client: client}
+	repo := &CategoryModel{Client: client, DBName: DBName}
 	var sortby string = "description"
 	var sortdirection string = "asc"
 	var description string = "testccc"
@@ -127,7 +128,7 @@ func TestCategoriesSingle(t *testing.T) {
 	teardownTest := setupTest(t)
 	defer teardownTest(t)
 
-	repo := &CategoryModel{Client: client}
+	repo := &CategoryModel{Client: client, DBName: DBName}
 
 	results, err := repo.Single(1)
 
@@ -145,7 +146,7 @@ func TestCategoriesSingleNonMatch(t *testing.T) {
 	teardownTest := setupTest(t)
 	defer teardownTest(t)
 
-	repo := &CategoryModel{Client: client}
+	repo := &CategoryModel{Client: client, DBName: DBName}
 
 	results, err := repo.Single(1111111)
 
@@ -162,7 +163,7 @@ func TestCategoriesByUserId(t *testing.T) {
 	teardownTest := setupTest(t)
 	defer teardownTest(t)
 
-	repo := &CategoryModel{Client: client}
+	repo := &CategoryModel{Client: client, DBName: DBName}
 
 	results, err := repo.ByUser("632655b353adec83f7f2d6a5")
 

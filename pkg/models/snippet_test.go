@@ -20,7 +20,7 @@ func TestSnippetsByUserFilter(t *testing.T) {
 		{userId: "632655b353adec83f7f2d6a51", resultCount: 0, errReturned: false, name: "User does not exist"},
 	}
 
-	repo := &SnippetModel{Client: client}
+	repo := &SnippetModel{Client: client, DBName: DBName}
 	for _, tc := range tests {
 		filter := SnippetFilter{
 			UserId: &tc.userId,
@@ -57,7 +57,7 @@ func TestSnippetsRetrievedById(t *testing.T) {
 		{snippetId: "111111111111111111111111", resultReturned: false, errReturned: true, name: "Invalid snippet ID"},
 	}
 
-	repo := &SnippetModel{Client: client}
+	repo := &SnippetModel{Client: client, DBName: DBName}
 	for _, tc := range tests {
 		res, err := repo.Single(tc.snippetId)
 		t.Logf("At test case %s", tc.name)
