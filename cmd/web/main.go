@@ -33,8 +33,12 @@ func run() (<-chan error, error) {
 		return nil, internal.WrapErrorf(err, internal.ErrorCodeUnknown, "env.Load")
 	}
 
-	mongoUri := os.Getenv("MONGODB_URI")
-	client, err := mongocl.NewMongoDB(mongoUri)
+	mongoParams := mongocl.DBParams{
+		Username: os.Getenv("MONGODB_USER"),
+		Password: os.Getenv("MONBODB_PWD"),
+		Uri:      os.Getenv("MONGODB_URI"),
+	}
+	client, err := mongocl.NewMongoDB(mongoParams)
 	if err != nil {
 		return nil, internal.WrapErrorf(err, internal.ErrorCodeUnknown, "mongodb.connect")
 	}

@@ -17,7 +17,17 @@ import (
 // 	Client *mongo.Client
 // }
 
-func NewMongoDB(uri string) (*mongo.Client, error) {
+type DBParams struct {
+	Username string
+	Password string
+	Uri      string
+}
+
+func (para DBParams) IncludesAuthentication() bool {
+	return para.Password != "" && para.Uri != ""
+}
+
+func NewMongoDB(params DBParams) (*mongo.Client, error) {
 	cmdMonitor := &event.CommandMonitor{
 		Started: func(_ context.Context, evt *event.CommandStartedEvent) {
 			log.Print(evt.Command)
@@ -25,7 +35,16 @@ func NewMongoDB(uri string) (*mongo.Client, error) {
 	}
 
 	ctx := context.Background()
-	clientOptions := options.Client().ApplyURI(uri).SetMonitor(cmdMonitor)
+	clientOptions := options.Client().ApplyURI(params.Uri).SetMonitor(cmdMonitor)
+
+	if params.IncludesAuthentication() {
+		credential := options.Credential{
+			Username: params.Username,
+			Password: params.Password,
+		}
+
+		clientOptions.SetAuth(credential)
+	}
 	client, err := mongo.Connect(ctx, clientOptions)
 
 	if err != nil {
