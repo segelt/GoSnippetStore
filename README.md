@@ -6,8 +6,8 @@ Missing parts:
 - [ ] Unit tests
 - [ ] Logging
 - [ ] Rate Limiting
-- [ ] Generating a docker image
-- [ ] Deploying the service locally with kubernetes
+- [x] Generating a docker image
+- [x] Deploying the service locally with kubernetes
 - [ ] Basic frontend app
 - [x] JWT Authentication
 - [x] Middlewares
