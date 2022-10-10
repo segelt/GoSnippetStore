@@ -45,6 +45,10 @@ func NewMongoDB(params DBParams) (*mongo.Client, error) {
 
 		clientOptions.SetAuth(credential)
 	}
+
+	log.Printf("Attempting to ping mongo host: %s\n", params.Uri)
+	log.Println(params)
+
 	client, err := mongo.Connect(ctx, clientOptions)
 
 	if err != nil {
