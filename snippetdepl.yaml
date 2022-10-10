@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snippetdemo-depl
+spec:
+  selector:
+    matchLabels:
+      app: snippetdemo-api
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: snippetdemo-api
+    spec:
+      containers:
+      - name: snippetdemo-api
+        image: snippetstoreapi
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 4000
+        env:
+          - name: MONGODB_USER
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-secret
+                key: MONGODB_USER
+          - name: MONBODB_PWD
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-secret
+                key: MONBODB_PWD
+          - name: MONGODB_URI
+            value: mongodb://mongodb-svc:27017
